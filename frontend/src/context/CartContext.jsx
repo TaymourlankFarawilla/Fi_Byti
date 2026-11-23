@@ -5,7 +5,14 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(() => {
     const saved = localStorage.getItem('fibyti_cart');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      // Filter out invalid items
+      return Array.isArray(parsed) ? parsed.filter(i => i && i.productId && i.sellerProfileId) : [];
+    } catch (e) {
+      return [];
+    }
   });
 
   const [sellerShippingSelections, setSellerShippingSelections] = useState(() => {
@@ -22,33 +29,37 @@ export function CartProvider({ children }) {
   }, [sellerShippingSelections]);
 
   const addToCart = (product, quantity = 1) => {
+    if (!product || !product.id) return;
+
     setCartItems(prev => {
       const existingIdx = prev.findIndex(item => item.productId === product.id);
+      const stockAvailable = product.stock_quantity !== undefined ? product.stock_quantity : (product.stockQuantity || 10);
+
       if (existingIdx > -1) {
         const existing = prev[existingIdx];
         const newQty = existing.quantity + quantity;
-        if (newQty > product.stock_quantity) {
-          alert(`Cannot add more. Reached available stock limit (${product.stock_quantity} available).`);
+        if (newQty > stockAvailable) {
+          alert(`Cannot add more. Reached available stock limit (${stockAvailable} available).`);
           return prev;
         }
         const updated = [...prev];
         updated[existingIdx] = { ...existing, quantity: newQty };
         return updated;
       } else {
-        if (quantity > product.stock_quantity) {
-          alert(`Cannot add. Reached available stock limit (${product.stock_quantity} available).`);
+        if (quantity > stockAvailable) {
+          alert(`Cannot add. Reached available stock limit (${stockAvailable} available).`);
           return prev;
         }
         return [...prev, {
           productId: product.id,
           name: product.name,
           priceEgp: product.price_egp,
-          stockQuantity: product.stock_quantity,
+          stockQuantity: stockAvailable,
           sellerProfileId: product.seller_id || product.seller_profile_id,
-          storeName: product.store_name,
-          sellerCity: product.seller_city || product.city,
+          storeName: product.store_name || 'Artisan Workshop',
+          sellerCity: product.seller_city || product.city || 'Cairo',
           pickupAvailable: product.pickup_available === 1 || product.pickup_available === true,
-          imageUrl: product.images && product.images[0] ? product.images[0].image_url : product.primary_image,
+          imageUrl: product.images && product.images[0] ? product.images[0].image_url : (product.primary_image || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'),
           quantity
         }];
       }
@@ -95,12 +106,12 @@ export function CartProvider({ children }) {
 
   // Group items by seller
   const groupedBySeller = cartItems.reduce((acc, item) => {
-    const sId = item.sellerProfileId;
+    const sId = item.sellerProfileId || 'default-seller';
     if (!acc[sId]) {
       acc[sId] = {
         sellerId: sId,
-        storeName: item.storeName,
-        sellerCity: item.sellerCity,
+        storeName: item.storeName || 'Artisan Workshop',
+        sellerCity: item.sellerCity || 'Cairo',
         pickupAvailable: item.pickupAvailable,
         items: [],
         subtotalEgp: 0

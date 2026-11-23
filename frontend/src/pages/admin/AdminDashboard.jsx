@@ -15,11 +15,13 @@ export default function AdminDashboard() {
   const [backups, setBackups] = useState([]);
   const [users, setUsers] = useState([]);
 
-  // Review modal state
-  const [selectedSeller, setSelectedSeller] = useState(null);
-  const [reviewDecision, setReviewDecision] = useState('APPROVE');
+  // Direct action feedback msg
+  const [actionMsg, setActionMsg] = useState('');
+
+  // Rejection Modal state
+  const [rejectingSeller, setRejectingSeller] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
-  const [reviewing, setReviewing] = useState(false);
+  const [submittingReject, setSubmittingReject] = useState(false);
 
   // Backup state
   const [creatingBackup, setCreatingBackup] = useState(false);
@@ -93,33 +95,63 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedSeller) return;
-
-    setReviewing(true);
+  // Direct 1-Click Seller Approval
+  const handleDirectApprove = async (sellerId, storeName) => {
+    setActionMsg('');
     try {
-      const res = await fetch(`/api/admin/verifications/${selectedSeller.id}/review`, {
+      const res = await fetch(`/api/admin/verifications/${sellerId}/review`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ decision: 'APPROVE' })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Approval failed.');
+
+      setActionMsg(`✓ Store "${storeName}" has been APPROVED & ACTIVATED successfully! Status updated.`);
+      loadVerifications();
+      loadUsers();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  // Submit Rejection
+  const handleRejectSubmit = async (e) => {
+    e.preventDefault();
+    if (!rejectingSeller) return;
+
+    setSubmittingReject(true);
+    setActionMsg('');
+
+    try {
+      const res = await fetch(`/api/admin/verifications/${rejectingSeller.id}/review`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          decision: reviewDecision,
+          decision: 'REJECT',
           rejectionReason
         })
       });
 
       const data = await res.json();
-      setReviewing(false);
+      setSubmittingReject(false);
 
-      if (!res.ok) throw new Error(data.error || 'Review failed.');
+      if (!res.ok) throw new Error(data.error || 'Rejection failed.');
 
-      setSelectedSeller(null);
+      setActionMsg(`Notice: Store "${rejectingSeller.store_name}" status set to REJECTED.`);
+      setRejectingSeller(null);
+      setRejectionReason('');
       loadVerifications();
+      loadUsers();
     } catch (err) {
-      setReviewing(false);
+      setSubmittingReject(false);
       alert(err.message);
     }
   };
@@ -169,6 +201,13 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {actionMsg && (
+        <div className="p-4 bg-emerald-100 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold flex items-center space-x-2">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <span>{actionMsg}</span>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200 space-x-8 text-sm font-medium overflow-x-auto pb-1">
@@ -273,24 +312,20 @@ export default function AdminDashboard() {
                     )}
                   </div>
 
+                  {/* Direct 1-Click Action Buttons */}
                   <div className="flex justify-end space-x-3 pt-2">
                     <button
-                      onClick={() => {
-                        setSelectedSeller(seller);
-                        setReviewDecision('REJECT');
-                      }}
-                      className="bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-lg font-bold hover:bg-red-100"
+                      onClick={() => setRejectingSeller(seller)}
+                      className="bg-red-50 text-red-700 border border-red-200 px-4 py-2 rounded-lg font-bold hover:bg-red-100 transition"
                     >
                       Reject Submission
                     </button>
                     <button
-                      onClick={() => {
-                        setSelectedSeller(seller);
-                        setReviewDecision('APPROVE');
-                      }}
-                      className="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700"
+                      onClick={() => handleDirectApprove(seller.id, seller.store_name)}
+                      className="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-sm transition flex items-center space-x-1.5"
                     >
-                      Approve & Activate Seller Store
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Approve & Activate Seller Store</span>
                     </button>
                   </div>
                 </div>
@@ -321,9 +356,9 @@ export default function AdminDashboard() {
                       <td className="p-3">{s.city}</td>
                       <td className="p-3 font-mono">{s.product_count}</td>
                       <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded font-bold text-[10px] uppercase ${
-                          s.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
-                          s.status === 'PENDING_VERIFICATION' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
+                        <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase ${
+                          s.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                          s.status === 'PENDING_VERIFICATION' ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-red-100 text-red-800 border border-red-300'
                         }`}>
                           {s.status}
                         </span>
@@ -518,56 +553,41 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* REVIEW ACTION MODAL */}
-      {selectedSeller && (
+      {/* REJECTION REASON MODAL */}
+      {rejectingSeller && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 text-xs">
             <h3 className="font-serif font-bold text-lg border-b pb-3 text-artisan-slate">
-              Review Seller Verification: {selectedSeller.store_name}
+              Reject Seller Verification: {rejectingSeller.store_name}
             </h3>
 
-            <form onSubmit={handleReviewSubmit} className="space-y-4">
+            <form onSubmit={handleRejectSubmit} className="space-y-4">
               <div>
-                <label className="block font-bold mb-1">Decision:</label>
-                <select
-                  value={reviewDecision}
-                  onChange={(e) => setReviewDecision(e.target.value)}
+                <label className="block font-bold mb-1">Rejection Reason / Notes:</label>
+                <textarea
+                  rows={3}
+                  required
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  placeholder="Provide explicit reason for seller to re-upload clear ID..."
                   className="w-full border rounded-lg p-2.5 text-sm"
-                >
-                  <option value="APPROVE">APPROVE (Activate Seller Store)</option>
-                  <option value="REJECT">REJECT (Keep Store Inactive)</option>
-                </select>
+                />
               </div>
-
-              {reviewDecision === 'REJECT' && (
-                <div>
-                  <label className="block font-bold mb-1">Rejection Reason / Notes:</label>
-                  <textarea
-                    rows={3}
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
-                    placeholder="Provide reason for seller to re-upload clear ID..."
-                    className="w-full border rounded-lg p-2.5 text-sm"
-                  />
-                </div>
-              )}
 
               <div className="border-t pt-4 flex justify-end space-x-3">
                 <button
                   type="button"
-                  onClick={() => setSelectedSeller(null)}
+                  onClick={() => setRejectingSeller(null)}
                   className="px-4 py-2 border rounded-lg text-gray-600"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={reviewing}
-                  className={`px-5 py-2 font-bold rounded-lg text-white ${
-                    reviewDecision === 'APPROVE' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'
-                  }`}
+                  disabled={submittingReject}
+                  className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg"
                 >
-                  {reviewing ? 'Saving...' : 'Submit Decision'}
+                  {submittingReject ? 'Rejecting...' : 'Confirm Rejection'}
                 </button>
               </div>
             </form>

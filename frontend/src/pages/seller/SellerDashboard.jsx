@@ -38,7 +38,7 @@ export default function SellerDashboard() {
   const [prodStock, setProdStock] = useState('10');
   const [prodStatus, setProdStatus] = useState('PUBLISHED');
   const [prodPhotoFiles, setProdPhotoFiles] = useState([]);
-  const [samplePhotoUrl, setSamplePhotoUrl] = useState('');
+  const [samplePhotoUrl, setSamplePhotoUrl] = useState('https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
   const [submittingProd, setSubmittingProd] = useState(false);
 
   // Shipment Update Modal state
@@ -76,11 +76,9 @@ export default function SellerDashboard() {
     try {
       const res = await fetch('/api/categories');
       const data = await res.json();
-      if (data.categories) {
+      if (data.categories && data.categories.length > 0) {
         setCategories(data.categories);
-        if (data.categories.length > 0 && !prodCatId) {
-          setProdCatId(data.categories[0].id);
-        }
+        setProdCatId(data.categories[0].id);
       }
     } catch (e) {
       console.error(e);
@@ -166,10 +164,12 @@ export default function SellerDashboard() {
 
   // Open Product Modal
   const openProductModal = (product = null) => {
+    const defaultCatId = categories.length > 0 ? categories[0].id : 'cat-pottery';
+
     if (product) {
       setEditingProduct(product);
       setProdName(product.name);
-      setProdCatId(product.category_id);
+      setProdCatId(product.category_id || defaultCatId);
       setProdDesc(product.description);
       setProdPrice(product.price_egp.toString());
       setProdMaterials(product.materials);
@@ -179,14 +179,15 @@ export default function SellerDashboard() {
       setProdLeadTime(product.production_time_days.toString());
       setProdStock(product.stock_quantity.toString());
       setProdStatus(product.status);
+      setSamplePhotoUrl(product.primary_image || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
     } else {
       setEditingProduct(null);
       setProdName('');
-      setProdCatId(categories[0]?.id || '');
+      setProdCatId(defaultCatId);
       setProdDesc('');
-      setProdPrice('');
-      setProdMaterials('');
-      setProdSize('');
+      setProdPrice('500');
+      setProdMaterials('Handcrafted Egyptian Clay / Cotton');
+      setProdSize('Standard size');
       setProdWeight('0.5');
       setProdPackaging('Corrugated craft box with eco cushioning');
       setProdLeadTime('2');
@@ -200,20 +201,27 @@ export default function SellerDashboard() {
   // Submit Product Form
   const handleSaveProduct = async (e) => {
     e.preventDefault();
+    const targetCatId = prodCatId || (categories[0] ? categories[0].id : 'cat-pottery');
+
+    if (!prodName.trim() || !targetCatId || !prodDesc.trim() || !prodPrice || !prodMaterials.trim()) {
+      alert('Please fill in all required product fields (Title, Category, Price, Description, Materials).');
+      return;
+    }
+
     setSubmittingProd(true);
 
     const formData = new FormData();
-    formData.append('name', prodName);
-    formData.append('categoryId', prodCatId);
-    formData.append('description', prodDesc);
+    formData.append('name', prodName.trim());
+    formData.append('categoryId', targetCatId);
+    formData.append('description', prodDesc.trim());
     formData.append('priceEgp', prodPrice);
-    formData.append('materials', prodMaterials);
-    formData.append('sizeDimensions', prodSize);
-    formData.append('weightKg', prodWeight);
-    formData.append('packagingDetails', prodPackaging);
-    formData.append('productionTimeDays', prodLeadTime);
-    formData.append('stockQuantity', prodStock);
-    formData.append('status', prodStatus);
+    formData.append('materials', prodMaterials.trim());
+    formData.append('sizeDimensions', prodSize.trim() || 'Standard');
+    formData.append('weightKg', prodWeight || '0.5');
+    formData.append('packagingDetails', prodPackaging.trim() || 'Safe protective craft packaging');
+    formData.append('productionTimeDays', prodLeadTime || '2');
+    formData.append('stockQuantity', prodStock || '10');
+    formData.append('status', prodStatus || 'PUBLISHED');
 
     if (samplePhotoUrl) {
       formData.append('existingPhotoUrls', samplePhotoUrl);
@@ -238,7 +246,7 @@ export default function SellerDashboard() {
       const data = await res.json();
       setSubmittingProd(false);
 
-      if (!res.ok) throw new Error(data.error || 'Failed to save product.');
+      if (!res.ok) throw new Error(data.error || 'Failed to save product listing.');
 
       setProductModalOpen(false);
       loadProducts();
@@ -625,6 +633,7 @@ export default function SellerDashboard() {
                 <div>
                   <label className="block font-bold mb-1">Craft Category *</label>
                   <select
+                    required
                     value={prodCatId}
                     onChange={(e) => setProdCatId(e.target.value)}
                     className="w-full border rounded-lg p-2.5 text-sm"
@@ -743,7 +752,7 @@ export default function SellerDashboard() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block font-bold mb-1">Sample Photo Image URL</label>
+                  <label className="block font-bold mb-1">Sample Photo Image URL (Optional)</label>
                   <input
                     type="text"
                     value={samplePhotoUrl}

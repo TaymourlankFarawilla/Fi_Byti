@@ -125,31 +125,38 @@ router.post('/products', requireApprovedSeller, (req, res) => {
 
     const { name, categoryId, description, priceEgp, materials, sizeDimensions, weightKg, packagingDetails, productionTimeDays, stockQuantity, status } = req.body;
 
-    if (!name || !categoryId || !description || priceEgp === undefined || !materials || !sizeDimensions || weightKg === undefined || !packagingDetails || stockQuantity === undefined) {
-      return res.status(400).json({ error: 'Missing required product fields. Please provide name, category, description, price, materials, dimensions, weight, packaging details, and stock quantity.' });
+    // Fall back to first category if categoryId is empty string
+    let finalCatId = categoryId;
+    if (!finalCatId) {
+      const firstCat = db.prepare('SELECT id FROM categories ORDER BY name ASC LIMIT 1').get();
+      finalCatId = firstCat ? firstCat.id : 'cat-pottery';
+    }
+
+    if (!name || !description || priceEgp === undefined || !materials) {
+      return res.status(400).json({ error: 'Please provide all required product details: Title, Category, Description, Price, and Materials.' });
     }
 
     const profile = req.sellerProfile;
     const productId = uuidv4();
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now().toString(36);
 
-    const price = parseFloat(priceEgp);
-    const weight = parseFloat(weightKg);
+    const price = parseFloat(priceEgp) || 100;
+    const weight = parseFloat(weightKg) || 0.5;
     const leadTime = parseInt(productionTimeDays) || 1;
-    const stock = parseInt(stockQuantity);
-
-    if (isNaN(price) || price < 0) return res.status(400).json({ error: 'Price must be a positive number in EGP.' });
-    if (isNaN(weight) || weight < 0) return res.status(400).json({ error: 'Weight must be a positive number in kg.' });
-    if (isNaN(stock) || stock < 0) return res.status(400).json({ error: 'Stock quantity must be 0 or greater.' });
+    const stock = parseInt(stockQuantity) >= 0 ? parseInt(stockQuantity) : 10;
+    const finalSize = sizeDimensions ? sizeDimensions.trim() : 'Standard';
+    const finalPackaging = packagingDetails ? packagingDetails.trim() : 'Standard protective craft box';
 
     db.transaction(() => {
       db.prepare(`
         INSERT INTO products (id, seller_profile_id, category_id, name, slug, description, price_egp, materials, size_dimensions, weight_kg, packaging_details, production_time_days, stock_quantity, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(productId, profile.id, categoryId, name.trim(), slug, description.trim(), price, materials.trim(), sizeDimensions.trim(), weight, packagingDetails.trim(), leadTime, stock, status || 'PUBLISHED');
+      `).run(productId, profile.id, finalCatId, name.trim(), slug, description.trim(), price, materials.trim(), finalSize, weight, finalPackaging, leadTime, stock, status || 'PUBLISHED');
 
       // Process uploaded files if any
+      let imageAttached = false;
       if (req.files && req.files.length > 0) {
+        imageAttached = true;
         req.files.forEach((file, index) => {
           const imgId = uuidv4();
           const imageUrl = `/uploads/product_images/${file.filename}`;
@@ -158,16 +165,29 @@ router.post('/products', requireApprovedSeller, (req, res) => {
             VALUES (?, ?, ?, ?, ?)
           `).run(imgId, productId, imageUrl, index === 0 ? 1 : 0, index);
         });
-      } else if (req.body.existingPhotoUrls) {
-        // Fallback for pre-defined / sample image URLs
+      }
+
+      if (!imageAttached && req.body.existingPhotoUrls) {
         const urls = Array.isArray(req.body.existingPhotoUrls) ? req.body.existingPhotoUrls : [req.body.existingPhotoUrls];
-        urls.forEach((url, index) => {
-          const imgId = uuidv4();
-          db.prepare(`
-            INSERT INTO product_images (id, product_id, image_url, is_primary, sort_order)
-            VALUES (?, ?, ?, ?, ?)
-          `).run(imgId, productId, url, index === 0 ? 1 : 0, index);
-        });
+        if (urls.length > 0 && urls[0]) {
+          imageAttached = true;
+          urls.forEach((url, index) => {
+            const imgId = uuidv4();
+            db.prepare(`
+              INSERT INTO product_images (id, product_id, image_url, is_primary, sort_order)
+              VALUES (?, ?, ?, ?, ?)
+            `).run(imgId, productId, url, index === 0 ? 1 : 0, index);
+          });
+        }
+      }
+
+      // Default fallback image if no photo uploaded or provided
+      if (!imageAttached) {
+        const defaultPlaceholder = 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80';
+        db.prepare(`
+          INSERT INTO product_images (id, product_id, image_url, is_primary, sort_order)
+          VALUES (?, ?, ?, 1, 0)
+        `).run(uuidv4(), productId, defaultPlaceholder);
       }
     })();
 
