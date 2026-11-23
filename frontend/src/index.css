@@ -4,18 +4,18 @@
 
 @layer base {
   body {
-    @apply bg-artisan-sand-light text-artisan-slate antialiased font-sans min-h-screen flex flex-col;
+    @apply bg-artisan-sand-light text-artisan-slate dark:bg-slate-950 dark:text-slate-100 antialiased font-sans min-h-screen flex flex-col transition-colors duration-200;
   }
 }
 
 .badge-terracotta {
-  @apply bg-artisan-terracotta/10 text-artisan-terracotta border border-artisan-terracotta/20 font-medium px-2.5 py-0.5 rounded-full text-xs;
+  @apply bg-artisan-terracotta/10 text-artisan-terracotta dark:bg-artisan-terracotta/20 dark:text-orange-300 border border-artisan-terracotta/20 font-medium px-2.5 py-0.5 rounded-full text-xs;
 }
 
 .badge-olive {
-  @apply bg-artisan-olive/10 text-artisan-olive border border-artisan-olive/20 font-medium px-2.5 py-0.5 rounded-full text-xs;
+  @apply bg-artisan-olive/10 text-artisan-olive dark:bg-emerald-950/60 dark:text-emerald-300 border border-artisan-olive/20 font-medium px-2.5 py-0.5 rounded-full text-xs;
 }
 
 .badge-gold {
-  @apply bg-artisan-gold/15 text-artisan-brass border border-artisan-gold/30 font-medium px-2.5 py-0.5 rounded-full text-xs;
+  @apply bg-artisan-gold/15 text-artisan-brass dark:bg-amber-950/60 dark:text-amber-300 border border-artisan-gold/30 font-medium px-2.5 py-0.5 rounded-full text-xs;
 }

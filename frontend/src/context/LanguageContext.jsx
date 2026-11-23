@@ -42,6 +42,8 @@ const translations = {
     lowStock: "Low Stock",
     outOfStock: "Out of Stock",
     addToCart: "Add to Cart",
+    price: "Price",
+    egp: "EGP",
 
     cartTitle: "Marketplace Shopping Cart",
     cartSubtitle: "Multi-seller cart with split shipping per artisan studio",
@@ -89,13 +91,32 @@ const translations = {
     langEnglish: "English",
     langArabic: "العربية",
     themeLight: "Light Mode",
-    themeDark: "Dark Mode"
+    themeDark: "Dark Mode",
+
+    // Additional Page Translations
+    sellerVerificationTitle: "Artisan Verification Required",
+    publishProduct: "Publish New Handmade Product",
+    manageListings: "Manage Craft Listings",
+    netEarnings: "Store Net Earnings Summary",
+    grossSales: "Gross Product Sales",
+    commissionRate: "2% Platform Commission",
+    netPayout: "Net Artisan Payout (98%)",
+
+    adminQueueTitle: "Pending Seller Identity Submissions",
+    approveSellerBtn: "Approve & Activate Seller Store",
+    rejectSellerBtn: "Reject Submission",
+    inspectIdFile: "Inspect ID File (Secure Admin Route)",
+
+    footerHandmade: "100% Egyptian Handmade",
+    footerSplitShipping: "Split Shipping & Pickup",
+    footerSecurePayment: "Secure EGP Payments",
+    footerLawCompliance: "Law 151/2020 Compliant"
   },
   ar: {
     appName: "في بيتي",
     appNameAr: "Fi Byti",
     tagline: "سوق الحرف اليدوية المصرية الأصيلة",
-    browseMarketplace: "تصفح السوق",
+    browseMarketplace: "تصفح معروضات السوق",
     joinSeller: "انضم كحرفي بائع",
     myOrders: "طلباتي",
     artisanPortal: "بوابة الحرفيين",
@@ -130,15 +151,17 @@ const translations = {
     lowStock: "كمية محدودة",
     outOfStock: "نفذت الكمية",
     addToCart: "إضافة للسلة",
+    price: "السعر",
+    egp: "جنيه مصري",
 
     cartTitle: "سلة التسوق",
     cartSubtitle: "سلة متعددة البائعين مع شحن منفصل لكل ورشة حرفية",
     clearCart: "تفريغ السلة",
     shipmentFrom: "شحنة من ورشة",
     chooseShipping: "اختر طريقة الشحن",
-    egyptPost: "البريد المصري",
-    privateCourier: "شركة شحن سريعة",
-    directPickup: "استلام مباشر من ورشة البائع",
+    egyptPost: "البريد المصري (40 جنيه)",
+    privateCourier: "شركة شحن سريعة (65 جنيه)",
+    directPickup: "استلام مباشر من ورشة البائع (مجاناً)",
 
     orderSummary: "ملخص الحساب والطلب",
     productsSubtotal: "إجمالي المنتجات",
@@ -158,9 +181,9 @@ const translations = {
     governorate: "المحافظة",
 
     paymentOption: "2. طريقة الدفع",
-    eWallets: "محافظ إلكترونية",
-    bankCards: "بطاقات بنكية",
-    cashOnDelivery: "الدفع عند الاستلام",
+    eWallets: "محافظ إلكترونية (فودافون كاش / إنستا باي)",
+    bankCards: "بطاقات بنكية (فيزا / ماستركارد)",
+    cashOnDelivery: "الدفع نقداً عند الاستلام",
 
     confirmOrder: "تأكيد الطلب النهائي",
     processingOrder: "جاري معالجة الطلب...",
@@ -177,7 +200,26 @@ const translations = {
     langEnglish: "English",
     langArabic: "العربية",
     themeLight: "الوضع الفاتح",
-    themeDark: "الوضع الداكن"
+    themeDark: "الوضع الداكن",
+
+    // Additional Page Translations
+    sellerVerificationTitle: "مطلوب توثيق هوية الحرفي",
+    publishProduct: "إضافة منتج حرفي جديد",
+    manageListings: "إدارة معروضات الورشة",
+    netEarnings: "ملخص الأرباح وصافي المبيعات",
+    grossSales: "إجمالي مبيعات المنتجات",
+    commissionRate: "عمولة المنصة (2%)",
+    netPayout: "صافي أرباح الحرفي (98%)",
+
+    adminQueueTitle: "طلبات توثيق الهوية قيد المراجعة",
+    approveSellerBtn: "موافقة وتفعيل متجر الحرفي",
+    rejectSellerBtn: "رفض الطلب",
+    inspectIdFile: "معاينة مستند الهوية (مسار آمن)",
+
+    footerHandmade: "صنع في مصر 100% يدوياً",
+    footerSplitShipping: "شحن منفصل واستلام من الورشة",
+    footerSecurePayment: "دفع آمن بالجنيه المصري",
+    footerLawCompliance: "متوافق مع قانون 151 لسنة 2020"
   }
 };
 
