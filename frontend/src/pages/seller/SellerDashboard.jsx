@@ -1,0 +1,853 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import {
+  Store, Upload, ShieldCheck, Clock, AlertTriangle, Plus, Edit, Trash2,
+  Package, DollarSign, Truck, CheckCircle2, FileText, Image as ImageIcon
+} from 'lucide-react';
+
+export default function SellerDashboard() {
+  const { user, sellerProfile, token, fetchMe } = useAuth();
+
+  const [activeTab, setActiveTab] = useState('products'); // 'products' | 'orders' | 'financials' | 'verification'
+  const [profileData, setProfileData] = useState(null);
+  const [verificationDoc, setVerificationDoc] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [shipments, setShipments] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+
+  // Upload Identity Document state
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [docUploadMsg, setDocUploadMsg] = useState('');
+
+  // Product Modal state
+  const [productModalOpen, setProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [categories, setCategories] = useState([]);
+
+  // Product Form fields
+  const [prodName, setProdName] = useState('');
+  const [prodCatId, setProdCatId] = useState('');
+  const [prodDesc, setProdDesc] = useState('');
+  const [prodPrice, setProdPrice] = useState('');
+  const [prodMaterials, setProdMaterials] = useState('');
+  const [prodSize, setProdSize] = useState('');
+  const [prodWeight, setProdWeight] = useState('0.5');
+  const [prodPackaging, setProdPackaging] = useState('Corrugated craft box with eco cushioning');
+  const [prodLeadTime, setProdLeadTime] = useState('2');
+  const [prodStock, setProdStock] = useState('10');
+  const [prodStatus, setProdStatus] = useState('PUBLISHED');
+  const [prodPhotoFiles, setProdPhotoFiles] = useState([]);
+  const [samplePhotoUrl, setSamplePhotoUrl] = useState('');
+  const [submittingProd, setSubmittingProd] = useState(false);
+
+  // Shipment Update Modal state
+  const [selectedShipment, setSelectedShipment] = useState(null);
+  const [newFulfillmentStatus, setNewFulfillmentStatus] = useState('CONFIRMED');
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [carrierNotes, setCarrierNotes] = useState('');
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [statusUpdateResult, setStatusUpdateResult] = useState(null);
+
+  useEffect(() => {
+    loadSellerProfile();
+    loadCategories();
+    loadProducts();
+    loadOrders();
+    loadAnalytics();
+  }, [token]);
+
+  const loadSellerProfile = async () => {
+    try {
+      const res = await fetch('/api/seller/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.profile) {
+        setProfileData(data.profile);
+        setVerificationDoc(data.verificationDoc);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const res = await fetch('/api/categories');
+      const data = await res.json();
+      if (data.categories) {
+        setCategories(data.categories);
+        if (data.categories.length > 0 && !prodCatId) {
+          setProdCatId(data.categories[0].id);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadProducts = async () => {
+    try {
+      const res = await fetch('/api/seller/products', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.products) setProducts(data.products);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadOrders = async () => {
+    try {
+      const res = await fetch('/api/seller/orders', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.shipments) setShipments(data.shipments);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadAnalytics = async () => {
+    try {
+      const res = await fetch('/api/seller/analytics', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.summary) setAnalytics(data.summary);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Upload Verification Document
+  const handleDocUpload = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      alert('Please select a PDF, JPG, or PNG file (up to 5 MB).');
+      return;
+    }
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      alert('File size exceeds 5 MB limit. Please select a smaller file.');
+      return;
+    }
+
+    setUploadingDoc(true);
+    setDocUploadMsg('');
+
+    const formData = new FormData();
+    formData.append('identityDocument', selectedFile);
+
+    try {
+      const res = await fetch('/api/seller/verify', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+
+      const data = await res.json();
+      setUploadingDoc(false);
+
+      if (!res.ok) throw new Error(data.error || 'Upload failed.');
+
+      setDocUploadMsg(data.message);
+      setProfileData(data.profile);
+      setVerificationDoc(data.document);
+      fetchMe();
+    } catch (err) {
+      setUploadingDoc(false);
+      alert(err.message);
+    }
+  };
+
+  // Open Product Modal
+  const openProductModal = (product = null) => {
+    if (product) {
+      setEditingProduct(product);
+      setProdName(product.name);
+      setProdCatId(product.category_id);
+      setProdDesc(product.description);
+      setProdPrice(product.price_egp.toString());
+      setProdMaterials(product.materials);
+      setProdSize(product.size_dimensions);
+      setProdWeight(product.weight_kg.toString());
+      setProdPackaging(product.packaging_details);
+      setProdLeadTime(product.production_time_days.toString());
+      setProdStock(product.stock_quantity.toString());
+      setProdStatus(product.status);
+    } else {
+      setEditingProduct(null);
+      setProdName('');
+      setProdCatId(categories[0]?.id || '');
+      setProdDesc('');
+      setProdPrice('');
+      setProdMaterials('');
+      setProdSize('');
+      setProdWeight('0.5');
+      setProdPackaging('Corrugated craft box with eco cushioning');
+      setProdLeadTime('2');
+      setProdStock('10');
+      setProdStatus('PUBLISHED');
+      setSamplePhotoUrl('https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
+    }
+    setProductModalOpen(true);
+  };
+
+  // Submit Product Form
+  const handleSaveProduct = async (e) => {
+    e.preventDefault();
+    setSubmittingProd(true);
+
+    const formData = new FormData();
+    formData.append('name', prodName);
+    formData.append('categoryId', prodCatId);
+    formData.append('description', prodDesc);
+    formData.append('priceEgp', prodPrice);
+    formData.append('materials', prodMaterials);
+    formData.append('sizeDimensions', prodSize);
+    formData.append('weightKg', prodWeight);
+    formData.append('packagingDetails', prodPackaging);
+    formData.append('productionTimeDays', prodLeadTime);
+    formData.append('stockQuantity', prodStock);
+    formData.append('status', prodStatus);
+
+    if (samplePhotoUrl) {
+      formData.append('existingPhotoUrls', samplePhotoUrl);
+    }
+
+    if (prodPhotoFiles && prodPhotoFiles.length > 0) {
+      for (let i = 0; i < prodPhotoFiles.length; i++) {
+        formData.append('photos', prodPhotoFiles[i]);
+      }
+    }
+
+    try {
+      const url = editingProduct ? `/api/seller/products/${editingProduct.id}` : '/api/seller/products';
+      const method = editingProduct ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+
+      const data = await res.json();
+      setSubmittingProd(false);
+
+      if (!res.ok) throw new Error(data.error || 'Failed to save product.');
+
+      setProductModalOpen(false);
+      loadProducts();
+    } catch (err) {
+      setSubmittingProd(false);
+      alert(err.message);
+    }
+  };
+
+  // Delete Product
+  const handleDeleteProduct = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this listing?')) return;
+    try {
+      const res = await fetch(`/api/seller/products/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) loadProducts();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Update Shipment Fulfillment Status
+  const handleUpdateShipmentStatus = async (e) => {
+    e.preventDefault();
+    if (!selectedShipment) return;
+
+    setUpdatingStatus(true);
+    setStatusUpdateResult(null);
+
+    try {
+      const res = await fetch(`/api/seller/shipments/${selectedShipment.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          fulfillmentStatus: newFulfillmentStatus,
+          trackingNumber,
+          carrierNotes
+        })
+      });
+
+      const data = await res.json();
+      setUpdatingStatus(false);
+
+      if (!res.ok) throw new Error(data.error || 'Failed to update status.');
+
+      setStatusUpdateResult(data);
+      loadOrders();
+      loadAnalytics();
+    } catch (err) {
+      setUpdatingStatus(false);
+      alert(err.message);
+    }
+  };
+
+  const status = profileData ? profileData.status : 'PENDING_VERIFICATION';
+  const isApproved = status === 'APPROVED';
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      {/* Header & Verification Status Banner */}
+      <div className="bg-white p-6 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-xl bg-artisan-terracotta text-white flex items-center justify-center font-serif font-bold text-2xl">
+              <Store className="w-6 h-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-serif font-bold text-artisan-slate">
+                {profileData ? profileData.store_name : 'Artisan Workshop Portal'}
+              </h1>
+              <p className="text-xs text-artisan-slate/60">
+                Independent Artisan Seller Portal • {profileData ? `${profileData.city}, ${profileData.governorate}` : ''}
+              </p>
+            </div>
+          </div>
+
+          {/* Status Badge */}
+          <div>
+            {status === 'APPROVED' && (
+              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Store Active & Verified</span>
+              </span>
+            )}
+            {status === 'PENDING_VERIFICATION' && (
+              <span className="bg-amber-100 text-amber-800 border border-amber-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                <Clock className="w-4 h-4 text-amber-600" />
+                <span>Verification Pending Review</span>
+              </span>
+            )}
+            {status === 'REJECTED' && (
+              <span className="bg-red-100 text-red-800 border border-red-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+                <span>Verification Rejected</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Verification Status Warning if not approved */}
+        {!isApproved && (
+          <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-2">
+            <div className="font-bold flex items-center space-x-2">
+              <Clock className="w-4 h-4 text-amber-600" />
+              <span>Identity Verification Required</span>
+            </div>
+            <p>
+              Under platform security policies, your store remains inactive until an administrator reviews and approves your identity document submission.
+            </p>
+            {profileData && profileData.rejection_reason && (
+              <div className="text-red-700 bg-red-50 p-2 rounded border border-red-200 mt-2 font-medium">
+                Rejection Reason: {profileData.rejection_reason}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 space-x-8 text-sm font-medium">
+        <button
+          onClick={() => setActiveTab('products')}
+          className={`pb-3 border-b-2 transition ${activeTab === 'products' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
+        >
+          My Craft Listings ({products.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`pb-3 border-b-2 transition ${activeTab === 'orders' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
+        >
+          Orders & Fulfillment ({shipments.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('financials')}
+          className={`pb-3 border-b-2 transition ${activeTab === 'financials' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
+        >
+          Earnings & 2% Commission
+        </button>
+        <button
+          onClick={() => setActiveTab('verification')}
+          className={`pb-3 border-b-2 transition ${activeTab === 'verification' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
+        >
+          Identity Verification Upload
+        </button>
+      </div>
+
+      {/* TAB 1: PRODUCT LISTINGS */}
+      {activeTab === 'products' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-serif font-bold text-lg text-artisan-slate">Manage Craft Listings</h3>
+
+            <button
+              onClick={() => openProductModal()}
+              disabled={!isApproved}
+              className={`px-4 py-2.5 rounded-xl font-medium text-xs flex items-center space-x-2 text-white shadow-sm transition ${
+                isApproved ? 'bg-artisan-terracotta hover:bg-artisan-terracotta-dark' : 'bg-gray-300 cursor-not-allowed'
+              }`}
+              title={!isApproved ? 'Requires Approved Verification status' : 'Add New Product'}
+            >
+              <Plus className="w-4 h-4" />
+              <span>Publish New Handmade Product</span>
+            </button>
+          </div>
+
+          {products.length === 0 ? (
+            <div className="bg-white p-12 rounded-2xl border border-dashed border-gray-300 text-center space-y-3">
+              <Package className="w-12 h-12 text-artisan-terracotta mx-auto" />
+              <h4 className="font-serif font-bold text-base text-artisan-slate">No Listings Created Yet</h4>
+              <p className="text-xs text-artisan-slate/60 max-w-md mx-auto">
+                Once approved, you can publish your handmade products with name, price in EGP, materials, dimensions, weight, and multiple photos.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product) => (
+                <div key={product.id} className="bg-white rounded-2xl border border-artisan-terracotta/20 overflow-hidden shadow-sm flex flex-col justify-between p-4 space-y-4">
+                  <div className="space-y-3">
+                    <div className="h-44 rounded-xl overflow-hidden bg-artisan-sand relative">
+                      <img src={product.primary_image} alt="" className="w-full h-full object-cover" />
+                      <span className="absolute top-2 right-2 badge-gold text-[10px] uppercase font-bold">
+                        Stock: {product.stock_quantity}
+                      </span>
+                    </div>
+
+                    <div>
+                      <div className="text-[11px] font-bold text-artisan-terracotta uppercase">{product.category_name}</div>
+                      <h4 className="font-serif font-bold text-base text-artisan-slate line-clamp-1">{product.name}</h4>
+                      <p className="text-xs text-gray-500 line-clamp-2 mt-1">{product.materials}</p>
+                    </div>
+
+                    <div className="text-xs space-y-1 text-gray-600 border-t pt-2">
+                      <div><strong>Dimensions:</strong> {product.size_dimensions}</div>
+                      <div><strong>Weight:</strong> {product.weight_kg} kg • <strong>Lead Time:</strong> {product.production_time_days} days</div>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-3 flex items-center justify-between">
+                    <div className="font-bold text-base text-artisan-slate">{product.price_egp} EGP</div>
+
+                    <div className="flex items-center space-x-2">
+                      <button onClick={() => openProductModal(product)} className="p-2 text-gray-500 hover:text-artisan-terracotta">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDeleteProduct(product.id)} className="p-2 text-gray-500 hover:text-red-600">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 2: ORDERS & FULFILLMENT */}
+      {activeTab === 'orders' && (
+        <div className="space-y-6">
+          <h3 className="font-serif font-bold text-lg text-artisan-slate">Artisan Order Fulfillment</h3>
+
+          {shipments.length === 0 ? (
+            <div className="bg-white p-12 rounded-2xl border text-center text-xs text-gray-500">
+              No orders received yet for your store.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {shipments.map((shipment) => (
+                <div key={shipment.id} className="bg-white p-5 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-4 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
+                    <div>
+                      <span className="text-gray-500">Buyer:</span> <strong className="text-artisan-slate font-bold">{shipment.shipping_full_name}</strong>
+                      <span className="text-gray-400 ml-3">📍 {shipment.shipping_city}, {shipment.shipping_governorate}</span>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <span className="badge-olive">Carrier: {shipment.shipping_method}</span>
+                      <span className="font-bold uppercase text-artisan-terracotta">Status: {shipment.fulfillment_status}</span>
+                    </div>
+                  </div>
+
+                  {/* Items list */}
+                  <div className="space-y-1">
+                    {shipment.items.map((item) => (
+                      <div key={item.id} className="flex justify-between py-1 text-gray-700">
+                        <span>{item.product_name} x {item.quantity}</span>
+                        <span className="font-bold">{item.total_price_egp} EGP</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t pt-3 flex flex-wrap items-center justify-between gap-4">
+                    <div className="text-gray-600">
+                      <div>Gross Amount: <strong>{shipment.seller_subtotal_egp} EGP</strong></div>
+                      <div>2% Platform Commission: <strong>{shipment.seller_commission_egp} EGP</strong></div>
+                      <div className="text-emerald-700 font-bold">Your Net Payout (98%): {shipment.seller_net_amount_egp} EGP</div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setSelectedShipment(shipment);
+                        setNewFulfillmentStatus(shipment.fulfillment_status);
+                        setTrackingNumber(shipment.tracking_number || '');
+                        setStatusUpdateResult(null);
+                      }}
+                      className="bg-artisan-terracotta text-white px-4 py-2 rounded-lg font-medium text-xs hover:bg-artisan-terracotta-dark"
+                    >
+                      Update Fulfillment Status & Trigger WhatsApp
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 3: FINANCIALS & 2% COMMISSION */}
+      {activeTab === 'financials' && (
+        <div className="space-y-6">
+          <h3 className="font-serif font-bold text-lg text-artisan-slate">Store Net Earnings Summary</h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-2">
+              <span className="text-xs text-gray-500 font-bold uppercase">Gross Product Sales</span>
+              <div className="text-3xl font-extrabold text-artisan-slate">{analytics ? analytics.grossSalesEgp : 0} EGP</div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm space-y-2">
+              <span className="text-xs text-amber-800 font-bold uppercase">Platform Commission (2%)</span>
+              <div className="text-3xl font-extrabold text-amber-700">{analytics ? analytics.platformCommissionEgp : 0} EGP</div>
+              <p className="text-[11px] text-gray-400">Fixed 2% intermediary marketplace fee</p>
+            </div>
+
+            <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 shadow-sm space-y-2">
+              <span className="text-xs text-emerald-800 font-bold uppercase">Net Artisan Payout (98%)</span>
+              <div className="text-3xl font-extrabold text-emerald-700">{analytics ? analytics.netPayoutEgp : 0} EGP</div>
+              <p className="text-[11px] text-emerald-800/70">Your direct net earnings</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: IDENTITY VERIFICATION UPLOAD */}
+      {activeTab === 'verification' && (
+        <div className="bg-white p-8 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-6 max-w-2xl">
+          <h3 className="font-serif font-bold text-lg text-artisan-slate border-b pb-3 flex items-center space-x-2">
+            <ShieldCheck className="w-5 h-5 text-artisan-terracotta" />
+            <span>Identity Document Submission (PDF, JPG, PNG &lt; 5 MB)</span>
+          </h3>
+
+          <p className="text-xs text-artisan-slate/70 leading-relaxed">
+            Required under platform guidelines and Law 151/2020. Upload your National ID or Commercial Register document. Your document is stored securely in encrypted private file storage and restricted strictly to authorized administrators.
+          </p>
+
+          {docUploadMsg && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium">
+              {docUploadMsg}
+            </div>
+          )}
+
+          {verificationDoc && (
+            <div className="bg-artisan-sand p-4 rounded-xl border border-artisan-terracotta/20 space-y-1 text-xs">
+              <div className="font-bold text-artisan-slate">Current Uploaded Document:</div>
+              <div>Filename: {verificationDoc.original_filename}</div>
+              <div>File Format: {verificationDoc.file_type}</div>
+              <div>File Size: {(verificationDoc.file_size / (1024 * 1024)).toFixed(2)} MB</div>
+              <div className="text-gray-400">Uploaded: {new Date(verificationDoc.uploaded_at).toLocaleString()}</div>
+            </div>
+          )}
+
+          <form onSubmit={handleDocUpload} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-artisan-slate mb-2">Select Identity File (PDF, JPG, PNG up to 5MB):</label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+                className="block w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-artisan-terracotta file:text-white hover:file:bg-artisan-terracotta-dark"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={uploadingDoc}
+              className="bg-artisan-terracotta text-white font-medium text-xs px-6 py-3 rounded-xl hover:bg-artisan-terracotta-dark shadow-sm"
+            >
+              {uploadingDoc ? 'Uploading...' : 'Submit Identity Document for Admin Review'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* CREATE / EDIT PRODUCT MODAL */}
+      {productModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="font-serif font-bold text-lg text-artisan-slate">
+                {editingProduct ? 'Edit Product Listing' : 'Publish New Handmade Craft'}
+              </h3>
+              <button onClick={() => setProductModalOpen(false)} className="text-gray-400 hover:text-gray-600 font-bold">✕</button>
+            </div>
+
+            <form onSubmit={handleSaveProduct} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="block font-bold mb-1">Product Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={prodName}
+                    onChange={(e) => setProdName(e.target.value)}
+                    placeholder="e.g. Fayoum Glazed Clay Jug"
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Craft Category *</label>
+                  <select
+                    value={prodCatId}
+                    onChange={(e) => setProdCatId(e.target.value)}
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  >
+                    {categories.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Price in EGP *</label>
+                  <input
+                    type="number"
+                    required
+                    value={prodPrice}
+                    onChange={(e) => setProdPrice(e.target.value)}
+                    placeholder="680"
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-bold mb-1">Product Description *</label>
+                  <textarea
+                    rows={3}
+                    required
+                    value={prodDesc}
+                    onChange={(e) => setProdDesc(e.target.value)}
+                    placeholder="Describe craft technique, regional story, glazing, weave pattern..."
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Craft Materials *</label>
+                  <input
+                    type="text"
+                    required
+                    value={prodMaterials}
+                    onChange={(e) => setProdMaterials(e.target.value)}
+                    placeholder="Red Nile Terracotta Clay, Glaze"
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Size & Dimensions *</label>
+                  <input
+                    type="text"
+                    required
+                    value={prodSize}
+                    onChange={(e) => setProdSize(e.target.value)}
+                    placeholder="Height: 25cm, Dia: 18cm"
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Weight (kg) *</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    required
+                    value={prodWeight}
+                    onChange={(e) => setProdWeight(e.target.value)}
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Production Lead Time (Days) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={prodLeadTime}
+                    onChange={(e) => setProdLeadTime(e.target.value)}
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Available Quantity (Stock) *</label>
+                  <input
+                    type="number"
+                    required
+                    value={prodStock}
+                    onChange={(e) => setProdStock(e.target.value)}
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold mb-1">Listing Status</label>
+                  <select
+                    value={prodStatus}
+                    onChange={(e) => setProdStatus(e.target.value)}
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  >
+                    <option value="PUBLISHED">Published (Visible in Catalog)</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="OUT_OF_STOCK">Out of Stock</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-bold mb-1">Packaging Details *</label>
+                  <input
+                    type="text"
+                    required
+                    value={prodPackaging}
+                    onChange={(e) => setProdPackaging(e.target.value)}
+                    placeholder="Corrugated craft box with eco-friendly cushioning"
+                    className="w-full border rounded-lg p-2.5 text-sm"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-bold mb-1">Sample Photo Image URL</label>
+                  <input
+                    type="text"
+                    value={samplePhotoUrl}
+                    onChange={(e) => setSamplePhotoUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full border rounded-lg p-2.5 text-sm font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="border-t pt-4 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setProductModalOpen(false)}
+                  className="px-4 py-2 text-gray-600 border rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingProd}
+                  className="px-5 py-2 bg-artisan-terracotta text-white rounded-lg font-bold"
+                >
+                  {submittingProd ? 'Saving...' : 'Save Product Listing'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* UPDATE SHIPMENT STATUS MODAL */}
+      {selectedShipment && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="font-serif font-bold text-lg text-artisan-slate">Update Shipment Fulfillment Status</h3>
+              <button onClick={() => setSelectedShipment(null)} className="text-gray-400 font-bold">✕</button>
+            </div>
+
+            {statusUpdateResult && (
+              <div className="bg-emerald-950 text-emerald-100 p-4 rounded-xl text-xs space-y-2">
+                <div className="font-bold text-emerald-400">✓ Status Updated & WhatsApp Triggered!</div>
+                <div>{statusUpdateResult.whatsappNotification?.statusMessage}</div>
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateShipmentStatus} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-bold mb-1">Fulfillment Status:</label>
+                <select
+                  value={newFulfillmentStatus}
+                  onChange={(e) => setNewFulfillmentStatus(e.target.value)}
+                  className="w-full border rounded-lg p-2.5 text-sm"
+                >
+                  <option value="CONFIRMED">CONFIRMED</option>
+                  <option value="IN_SHIPMENT">IN_SHIPMENT (Dispatched)</option>
+                  <option value="DELIVERED">DELIVERED</option>
+                  <option value="CANCELLED">CANCELLED</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold mb-1">Carrier Tracking Number:</label>
+                <input
+                  type="text"
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  placeholder="e.g. EGPOST-98231-FAY"
+                  className="w-full border rounded-lg p-2.5 font-mono text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold mb-1">Carrier Notes:</label>
+                <input
+                  type="text"
+                  value={carrierNotes}
+                  onChange={(e) => setCarrierNotes(e.target.value)}
+                  placeholder="Handed over to Egypt Post courier"
+                  className="w-full border rounded-lg p-2.5 text-sm"
+                />
+              </div>
+
+              <div className="border-t pt-4 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedShipment(null)}
+                  className="px-4 py-2 border rounded-lg text-gray-600"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  disabled={updatingStatus}
+                  className="px-5 py-2 bg-artisan-terracotta text-white rounded-lg font-bold"
+                >
+                  {updatingStatus ? 'Updating...' : 'Save & Trigger WhatsApp Notification'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,17 @@
+{
+  "name": "fi-byti-marketplace",
+  "version": "1.0.0",
+  "description": "Fi Byti (في بيتي) - Egyptian Handmade Craft Marketplace",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "install:all": "cmd /c \"npm install && cd backend && npm install && cd ../frontend && npm install\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "start": "cd backend && npm start",
+    "seed": "cd backend && npm run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

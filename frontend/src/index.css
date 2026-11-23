@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-artisan-sand-light text-artisan-slate antialiased font-sans min-h-screen flex flex-col;
+  }
+}
+
+.badge-terracotta {
+  @apply bg-artisan-terracotta/10 text-artisan-terracotta border border-artisan-terracotta/20 font-medium px-2.5 py-0.5 rounded-full text-xs;
+}
+
+.badge-olive {
+  @apply bg-artisan-olive/10 text-artisan-olive border border-artisan-olive/20 font-medium px-2.5 py-0.5 rounded-full text-xs;
+}
+
+.badge-gold {
+  @apply bg-artisan-gold/15 text-artisan-brass border border-artisan-gold/30 font-medium px-2.5 py-0.5 rounded-full text-xs;
+}
