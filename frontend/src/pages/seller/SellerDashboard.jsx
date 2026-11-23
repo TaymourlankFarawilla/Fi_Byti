@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import {
   Store, Upload, ShieldCheck, Clock, AlertTriangle, Plus, Edit, Trash2,
-  Package, DollarSign, Truck, CheckCircle2, FileText, Image as ImageIcon
+  Package, DollarSign, Truck, CheckCircle2, FileText, Ban
 } from 'lucide-react';
 
 export default function SellerDashboard() {
   const { user, sellerProfile, token, fetchMe } = useAuth();
+  const { t, isRtl } = useLanguage();
+  const navigate = useNavigate();
+
+  // Route protection
+  useEffect(() => {
+    if (!user || user.role !== 'SELLER') {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   const [activeTab, setActiveTab] = useState('products'); // 'products' | 'orders' | 'financials' | 'verification'
   const [profileData, setProfileData] = useState(null);
@@ -50,11 +61,13 @@ export default function SellerDashboard() {
   const [statusUpdateResult, setStatusUpdateResult] = useState(null);
 
   useEffect(() => {
-    loadSellerProfile();
-    loadCategories();
-    loadProducts();
-    loadOrders();
-    loadAnalytics();
+    if (token) {
+      loadSellerProfile();
+      loadCategories();
+      loadProducts();
+      loadOrders();
+      loadAnalytics();
+    }
   }, [token]);
 
   const loadSellerProfile = async () => {
@@ -308,21 +321,24 @@ export default function SellerDashboard() {
 
   const status = profileData ? profileData.status : 'PENDING_VERIFICATION';
   const isApproved = status === 'APPROVED';
+  const isSuspended = status === 'SUSPENDED';
+
+  if (!user || user.role !== 'SELLER') return null;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Header & Verification Status Banner */}
-      <div className="bg-white p-6 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
-          <div className="flex items-center space-x-3">
+      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b dark:border-slate-800 pb-4">
+          <div className="flex items-center space-x-3 rtl:space-x-reverse">
             <div className="w-12 h-12 rounded-xl bg-artisan-terracotta text-white flex items-center justify-center font-serif font-bold text-2xl">
               <Store className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-serif font-bold text-artisan-slate">
-                {profileData ? profileData.store_name : 'Artisan Workshop Portal'}
+              <h1 className="text-2xl font-serif font-bold text-artisan-slate dark:text-white">
+                {profileData ? profileData.store_name : t('artisanPortal')}
               </h1>
-              <p className="text-xs text-artisan-slate/60">
+              <p className="text-xs text-artisan-slate/60 dark:text-slate-400">
                 Independent Artisan Seller Portal • {profileData ? `${profileData.city}, ${profileData.governorate}` : ''}
               </p>
             </div>
@@ -331,19 +347,25 @@ export default function SellerDashboard() {
           {/* Status Badge */}
           <div>
             {status === 'APPROVED' && (
-              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1 rtl:space-x-reverse">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>Store Active & Verified</span>
               </span>
             )}
             {status === 'PENDING_VERIFICATION' && (
-              <span className="bg-amber-100 text-amber-800 border border-amber-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+              <span className="bg-amber-100 text-amber-800 border border-amber-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1 rtl:space-x-reverse">
                 <Clock className="w-4 h-4 text-amber-600" />
                 <span>Verification Pending Review</span>
               </span>
             )}
+            {status === 'SUSPENDED' && (
+              <span className="bg-red-100 text-red-800 border border-red-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1 rtl:space-x-reverse">
+                <Ban className="w-4 h-4 text-red-600" />
+                <span>Store Suspended by Admin</span>
+              </span>
+            )}
             {status === 'REJECTED' && (
-              <span className="bg-red-100 text-red-800 border border-red-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
+              <span className="bg-red-100 text-red-800 border border-red-300 px-3.5 py-1 rounded-full text-xs font-bold flex items-center space-x-1 rtl:space-x-reverse">
                 <AlertTriangle className="w-4 h-4 text-red-600" />
                 <span>Verification Rejected</span>
               </span>
@@ -351,86 +373,92 @@ export default function SellerDashboard() {
           </div>
         </div>
 
-        {/* Verification Status Warning if not approved */}
-        {!isApproved && (
-          <div className="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-2">
-            <div className="font-bold flex items-center space-x-2">
+        {/* Store Suspended Notice */}
+        {isSuspended && (
+          <div className="bg-red-50 dark:bg-red-950 p-4 rounded-xl border border-red-200 dark:border-red-800 text-xs text-red-800 dark:text-red-300 space-y-1">
+            <div className="font-bold flex items-center space-x-2 rtl:space-x-reverse">
+              <Ban className="w-4 h-4 text-red-600" />
+              <span>Notice: Your store has been suspended by administration.</span>
+            </div>
+            <p>Your products are temporarily hidden from the public marketplace catalog until re-activated by an administrator.</p>
+          </div>
+        )}
+
+        {/* Verification Status Warning if pending */}
+        {status === 'PENDING_VERIFICATION' && (
+          <div className="bg-amber-50 dark:bg-amber-950/40 p-4 rounded-xl border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-2">
+            <div className="font-bold flex items-center space-x-2 rtl:space-x-reverse">
               <Clock className="w-4 h-4 text-amber-600" />
               <span>Identity Verification Required</span>
             </div>
             <p>
               Under platform security policies, your store remains inactive until an administrator reviews and approves your identity document submission.
             </p>
-            {profileData && profileData.rejection_reason && (
-              <div className="text-red-700 bg-red-50 p-2 rounded border border-red-200 mt-2 font-medium">
-                Rejection Reason: {profileData.rejection_reason}
-              </div>
-            )}
           </div>
         )}
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 space-x-8 text-sm font-medium">
+      <div className="flex border-b border-gray-200 dark:border-slate-800 space-x-8 rtl:space-x-reverse text-sm font-medium">
         <button
           onClick={() => setActiveTab('products')}
           className={`pb-3 border-b-2 transition ${activeTab === 'products' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
         >
-          My Craft Listings ({products.length})
+          {t('manageListings')} ({products.length})
         </button>
         <button
           onClick={() => setActiveTab('orders')}
           className={`pb-3 border-b-2 transition ${activeTab === 'orders' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
         >
-          Orders & Fulfillment ({shipments.length})
+          {t('myOrders')} ({shipments.length})
         </button>
         <button
           onClick={() => setActiveTab('financials')}
           className={`pb-3 border-b-2 transition ${activeTab === 'financials' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
         >
-          Earnings & 2% Commission
+          {t('netEarnings')}
         </button>
         <button
           onClick={() => setActiveTab('verification')}
           className={`pb-3 border-b-2 transition ${activeTab === 'verification' ? 'border-artisan-terracotta text-artisan-terracotta font-bold' : 'border-transparent text-gray-500 hover:text-artisan-slate'}`}
         >
-          Identity Verification Upload
+          {t('sellerVerificationTitle')}
         </button>
       </div>
 
-      {/* TAB 1: PRODUCT LISTINGS */}
+      {/* TAB 1: PRODUCT LISTINGS (ISOLATED TO LOGGED IN SELLER) */}
       {activeTab === 'products' && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-serif font-bold text-lg text-artisan-slate">Manage Craft Listings</h3>
+            <h3 className="font-serif font-bold text-lg text-artisan-slate dark:text-white">{t('manageListings')}</h3>
 
             <button
               onClick={() => openProductModal()}
               disabled={!isApproved}
-              className={`px-4 py-2.5 rounded-xl font-medium text-xs flex items-center space-x-2 text-white shadow-sm transition ${
+              className={`px-4 py-2.5 rounded-xl font-medium text-xs flex items-center space-x-2 rtl:space-x-reverse text-white shadow-sm transition ${
                 isApproved ? 'bg-artisan-terracotta hover:bg-artisan-terracotta-dark' : 'bg-gray-300 cursor-not-allowed'
               }`}
               title={!isApproved ? 'Requires Approved Verification status' : 'Add New Product'}
             >
               <Plus className="w-4 h-4" />
-              <span>Publish New Handmade Product</span>
+              <span>{t('publishProduct')}</span>
             </button>
           </div>
 
           {products.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl border border-dashed border-gray-300 text-center space-y-3">
+            <div className="bg-white dark:bg-slate-900 p-12 rounded-2xl border border-dashed border-gray-300 dark:border-slate-800 text-center space-y-3">
               <Package className="w-12 h-12 text-artisan-terracotta mx-auto" />
-              <h4 className="font-serif font-bold text-base text-artisan-slate">No Listings Created Yet</h4>
-              <p className="text-xs text-artisan-slate/60 max-w-md mx-auto">
-                Once approved, you can publish your handmade products with name, price in EGP, materials, dimensions, weight, and multiple photos.
+              <h4 className="font-serif font-bold text-base text-artisan-slate dark:text-white">No Listings Created Yet for Your Store</h4>
+              <p className="text-xs text-artisan-slate/60 dark:text-slate-400 max-w-md mx-auto">
+                Once approved, you can publish your handmade products with name, price in EGP, materials, dimensions, weight, and photos.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-2xl border border-artisan-terracotta/20 overflow-hidden shadow-sm flex flex-col justify-between p-4 space-y-4">
+                <div key={product.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between p-4 space-y-4">
                   <div className="space-y-3">
-                    <div className="h-44 rounded-xl overflow-hidden bg-artisan-sand relative">
+                    <div className="h-44 rounded-xl overflow-hidden bg-artisan-sand dark:bg-slate-800 relative">
                       <img src={product.primary_image} alt="" className="w-full h-full object-cover" />
                       <span className="absolute top-2 right-2 badge-gold text-[10px] uppercase font-bold">
                         Stock: {product.stock_quantity}
@@ -439,20 +467,20 @@ export default function SellerDashboard() {
 
                     <div>
                       <div className="text-[11px] font-bold text-artisan-terracotta uppercase">{product.category_name}</div>
-                      <h4 className="font-serif font-bold text-base text-artisan-slate line-clamp-1">{product.name}</h4>
-                      <p className="text-xs text-gray-500 line-clamp-2 mt-1">{product.materials}</p>
+                      <h4 className="font-serif font-bold text-base text-artisan-slate dark:text-white line-clamp-1">{product.name}</h4>
+                      <p className="text-xs text-gray-500 dark:text-slate-400 line-clamp-2 mt-1">{product.materials}</p>
                     </div>
 
-                    <div className="text-xs space-y-1 text-gray-600 border-t pt-2">
+                    <div className="text-xs space-y-1 text-gray-600 dark:text-slate-300 border-t dark:border-slate-800 pt-2">
                       <div><strong>Dimensions:</strong> {product.size_dimensions}</div>
                       <div><strong>Weight:</strong> {product.weight_kg} kg • <strong>Lead Time:</strong> {product.production_time_days} days</div>
                     </div>
                   </div>
 
-                  <div className="border-t pt-3 flex items-center justify-between">
-                    <div className="font-bold text-base text-artisan-slate">{product.price_egp} EGP</div>
+                  <div className="border-t dark:border-slate-800 pt-3 flex items-center justify-between">
+                    <div className="font-bold text-base text-artisan-slate dark:text-white">{product.price_egp} {t('egp')}</div>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
                       <button onClick={() => openProductModal(product)} className="p-2 text-gray-500 hover:text-artisan-terracotta">
                         <Edit className="w-4 h-4" />
                       </button>
@@ -468,26 +496,26 @@ export default function SellerDashboard() {
         </div>
       )}
 
-      {/* TAB 2: ORDERS & FULFILLMENT */}
+      {/* TAB 2: ORDERS & FULFILLMENT (ISOLATED TO LOGGED IN SELLER) */}
       {activeTab === 'orders' && (
         <div className="space-y-6">
-          <h3 className="font-serif font-bold text-lg text-artisan-slate">Artisan Order Fulfillment</h3>
+          <h3 className="font-serif font-bold text-lg text-artisan-slate dark:text-white">{t('myOrders')}</h3>
 
           {shipments.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl border text-center text-xs text-gray-500">
+            <div className="bg-white dark:bg-slate-900 p-12 rounded-2xl border dark:border-slate-800 text-center text-xs text-gray-500 dark:text-slate-400">
               No orders received yet for your store.
             </div>
           ) : (
             <div className="space-y-4">
               {shipments.map((shipment) => (
-                <div key={shipment.id} className="bg-white p-5 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-4 text-xs">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
+                <div key={shipment.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 shadow-sm space-y-4 text-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b dark:border-slate-800 pb-3">
                     <div>
-                      <span className="text-gray-500">Buyer:</span> <strong className="text-artisan-slate font-bold">{shipment.shipping_full_name}</strong>
+                      <span className="text-gray-500">Buyer:</span> <strong className="text-artisan-slate dark:text-white font-bold">{shipment.shipping_full_name}</strong>
                       <span className="text-gray-400 ml-3">📍 {shipment.shipping_city}, {shipment.shipping_governorate}</span>
                     </div>
 
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
                       <span className="badge-olive">Carrier: {shipment.shipping_method}</span>
                       <span className="font-bold uppercase text-artisan-terracotta">Status: {shipment.fulfillment_status}</span>
                     </div>
@@ -496,18 +524,18 @@ export default function SellerDashboard() {
                   {/* Items list */}
                   <div className="space-y-1">
                     {shipment.items.map((item) => (
-                      <div key={item.id} className="flex justify-between py-1 text-gray-700">
+                      <div key={item.id} className="flex justify-between py-1 text-gray-700 dark:text-slate-300">
                         <span>{item.product_name} x {item.quantity}</span>
-                        <span className="font-bold">{item.total_price_egp} EGP</span>
+                        <span className="font-bold">{item.total_price_egp} {t('egp')}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="border-t pt-3 flex flex-wrap items-center justify-between gap-4">
-                    <div className="text-gray-600">
+                  <div className="border-t dark:border-slate-800 pt-3 flex flex-wrap items-center justify-between gap-4">
+                    <div className="text-gray-600 dark:text-slate-300">
                       <div>Gross Amount: <strong>{shipment.seller_subtotal_egp} EGP</strong></div>
                       <div>2% Platform Commission: <strong>{shipment.seller_commission_egp} EGP</strong></div>
-                      <div className="text-emerald-700 font-bold">Your Net Payout (98%): {shipment.seller_net_amount_egp} EGP</div>
+                      <div className="text-emerald-700 dark:text-emerald-400 font-bold">Your Net Payout (98%): {shipment.seller_net_amount_egp} EGP</div>
                     </div>
 
                     <button
@@ -529,27 +557,27 @@ export default function SellerDashboard() {
         </div>
       )}
 
-      {/* TAB 3: FINANCIALS & 2% COMMISSION */}
+      {/* TAB 3: FINANCIALS & 2% COMMISSION (ISOLATED TO LOGGED IN SELLER) */}
       {activeTab === 'financials' && (
         <div className="space-y-6">
-          <h3 className="font-serif font-bold text-lg text-artisan-slate">Store Net Earnings Summary</h3>
+          <h3 className="font-serif font-bold text-lg text-artisan-slate dark:text-white">{t('netEarnings')}</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-2">
-              <span className="text-xs text-gray-500 font-bold uppercase">Gross Product Sales</span>
-              <div className="text-3xl font-extrabold text-artisan-slate">{analytics ? analytics.grossSalesEgp : 0} EGP</div>
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 shadow-sm space-y-2">
+              <span className="text-xs text-gray-500 font-bold uppercase">{t('grossSales')}</span>
+              <div className="text-3xl font-extrabold text-artisan-slate dark:text-white">{analytics ? analytics.grossSalesEgp : 0} {t('egp')}</div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm space-y-2">
-              <span className="text-xs text-amber-800 font-bold uppercase">Platform Commission (2%)</span>
-              <div className="text-3xl font-extrabold text-amber-700">{analytics ? analytics.platformCommissionEgp : 0} EGP</div>
-              <p className="text-[11px] text-gray-400">Fixed 2% intermediary marketplace fee</p>
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-amber-200 dark:border-amber-700 shadow-sm space-y-2">
+              <span className="text-xs text-amber-800 dark:text-amber-300 font-bold uppercase">{t('commissionRate')}</span>
+              <div className="text-3xl font-extrabold text-amber-700 dark:text-amber-300">{analytics ? analytics.platformCommissionEgp : 0} {t('egp')}</div>
+              <p className="text-[11px] text-gray-400">{t('commissionDesc')}</p>
             </div>
 
-            <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200 shadow-sm space-y-2">
-              <span className="text-xs text-emerald-800 font-bold uppercase">Net Artisan Payout (98%)</span>
-              <div className="text-3xl font-extrabold text-emerald-700">{analytics ? analytics.netPayoutEgp : 0} EGP</div>
-              <p className="text-[11px] text-emerald-800/70">Your direct net earnings</p>
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800 shadow-sm space-y-2">
+              <span className="text-xs text-emerald-800 dark:text-emerald-300 font-bold uppercase">{t('netPayout')}</span>
+              <div className="text-3xl font-extrabold text-emerald-700 dark:text-emerald-300">{analytics ? analytics.netPayoutEgp : 0} {t('egp')}</div>
+              <p className="text-[11px] text-emerald-800/70 dark:text-emerald-400">Direct net earnings</p>
             </div>
           </div>
         </div>
@@ -557,25 +585,25 @@ export default function SellerDashboard() {
 
       {/* TAB 4: IDENTITY VERIFICATION UPLOAD */}
       {activeTab === 'verification' && (
-        <div className="bg-white p-8 rounded-2xl border border-artisan-terracotta/20 shadow-sm space-y-6 max-w-2xl">
-          <h3 className="font-serif font-bold text-lg text-artisan-slate border-b pb-3 flex items-center space-x-2">
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 shadow-sm space-y-6 max-w-2xl">
+          <h3 className="font-serif font-bold text-lg text-artisan-slate dark:text-white border-b dark:border-slate-800 pb-3 flex items-center space-x-2 rtl:space-x-reverse">
             <ShieldCheck className="w-5 h-5 text-artisan-terracotta" />
-            <span>Identity Document Submission (PDF, JPG, PNG &lt; 5 MB)</span>
+            <span>{t('sellerVerificationTitle')} (PDF, JPG, PNG &lt; 5 MB)</span>
           </h3>
 
-          <p className="text-xs text-artisan-slate/70 leading-relaxed">
+          <p className="text-xs text-artisan-slate/70 dark:text-slate-300 leading-relaxed">
             Required under platform guidelines and Law 151/2020. Upload your National ID or Commercial Register document. Your document is stored securely in encrypted private file storage and restricted strictly to authorized administrators.
           </p>
 
           {docUploadMsg && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-medium">
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 rounded-lg text-xs font-medium">
               {docUploadMsg}
             </div>
           )}
 
           {verificationDoc && (
-            <div className="bg-artisan-sand p-4 rounded-xl border border-artisan-terracotta/20 space-y-1 text-xs">
-              <div className="font-bold text-artisan-slate">Current Uploaded Document:</div>
+            <div className="bg-artisan-sand dark:bg-slate-800 p-4 rounded-xl border border-artisan-terracotta/20 dark:border-slate-700 space-y-1 text-xs">
+              <div className="font-bold text-artisan-slate dark:text-white">Current Uploaded Document:</div>
               <div>Filename: {verificationDoc.original_filename}</div>
               <div>File Format: {verificationDoc.file_type}</div>
               <div>File Size: {(verificationDoc.file_size / (1024 * 1024)).toFixed(2)} MB</div>
@@ -585,7 +613,7 @@ export default function SellerDashboard() {
 
           <form onSubmit={handleDocUpload} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-artisan-slate mb-2">Select Identity File (PDF, JPG, PNG up to 5MB):</label>
+              <label className="block text-xs font-bold text-artisan-slate dark:text-slate-200 mb-2">Select Identity File (PDF, JPG, PNG up to 5MB):</label>
               <input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
@@ -608,10 +636,10 @@ export default function SellerDashboard() {
       {/* CREATE / EDIT PRODUCT MODAL */}
       {productModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-4">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-serif font-bold text-lg text-artisan-slate">
-                {editingProduct ? 'Edit Product Listing' : 'Publish New Handmade Craft'}
+          <div className="bg-white dark:bg-slate-900 text-artisan-slate dark:text-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh] space-y-4">
+            <div className="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+              <h3 className="font-serif font-bold text-lg text-artisan-slate dark:text-white">
+                {editingProduct ? 'Edit Product Listing' : t('publishProduct')}
               </h3>
               <button onClick={() => setProductModalOpen(false)} className="text-gray-400 hover:text-gray-600 font-bold">✕</button>
             </div>
@@ -626,7 +654,7 @@ export default function SellerDashboard() {
                     value={prodName}
                     onChange={(e) => setProdName(e.target.value)}
                     placeholder="e.g. Fayoum Glazed Clay Jug"
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -636,10 +664,10 @@ export default function SellerDashboard() {
                     required
                     value={prodCatId}
                     onChange={(e) => setProdCatId(e.target.value)}
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   >
                     {categories.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+                      <option key={c.id} value={c.id}>{isRtl && c.name_ar ? c.name_ar : c.name}</option>
                     ))}
                   </select>
                 </div>
@@ -652,7 +680,7 @@ export default function SellerDashboard() {
                     value={prodPrice}
                     onChange={(e) => setProdPrice(e.target.value)}
                     placeholder="680"
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -664,7 +692,7 @@ export default function SellerDashboard() {
                     value={prodDesc}
                     onChange={(e) => setProdDesc(e.target.value)}
                     placeholder="Describe craft technique, regional story, glazing, weave pattern..."
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -676,7 +704,7 @@ export default function SellerDashboard() {
                     value={prodMaterials}
                     onChange={(e) => setProdMaterials(e.target.value)}
                     placeholder="Red Nile Terracotta Clay, Glaze"
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -688,7 +716,7 @@ export default function SellerDashboard() {
                     value={prodSize}
                     onChange={(e) => setProdSize(e.target.value)}
                     placeholder="Height: 25cm, Dia: 18cm"
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -700,7 +728,7 @@ export default function SellerDashboard() {
                     required
                     value={prodWeight}
                     onChange={(e) => setProdWeight(e.target.value)}
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -711,7 +739,7 @@ export default function SellerDashboard() {
                     required
                     value={prodLeadTime}
                     onChange={(e) => setProdLeadTime(e.target.value)}
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -722,7 +750,7 @@ export default function SellerDashboard() {
                     required
                     value={prodStock}
                     onChange={(e) => setProdStock(e.target.value)}
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -731,7 +759,7 @@ export default function SellerDashboard() {
                   <select
                     value={prodStatus}
                     onChange={(e) => setProdStatus(e.target.value)}
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   >
                     <option value="PUBLISHED">Published (Visible in Catalog)</option>
                     <option value="DRAFT">Draft</option>
@@ -747,7 +775,7 @@ export default function SellerDashboard() {
                     value={prodPackaging}
                     onChange={(e) => setProdPackaging(e.target.value)}
                     placeholder="Corrugated craft box with eco-friendly cushioning"
-                    className="w-full border rounded-lg p-2.5 text-sm"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                   />
                 </div>
 
@@ -758,16 +786,16 @@ export default function SellerDashboard() {
                     value={samplePhotoUrl}
                     onChange={(e) => setSamplePhotoUrl(e.target.value)}
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full border rounded-lg p-2.5 text-sm font-mono"
+                    className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm font-mono"
                   />
                 </div>
               </div>
 
-              <div className="border-t pt-4 flex justify-end space-x-3">
+              <div className="border-t dark:border-slate-800 pt-4 flex justify-end space-x-3 rtl:space-x-reverse">
                 <button
                   type="button"
                   onClick={() => setProductModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 border rounded-lg"
+                  className="px-4 py-2 text-gray-600 dark:text-slate-300 border rounded-lg"
                 >
                   Cancel
                 </button>
@@ -787,9 +815,9 @@ export default function SellerDashboard() {
       {/* UPDATE SHIPMENT STATUS MODAL */}
       {selectedShipment && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-serif font-bold text-lg text-artisan-slate">Update Shipment Fulfillment Status</h3>
+          <div className="bg-white dark:bg-slate-900 text-artisan-slate dark:text-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b dark:border-slate-800 pb-3">
+              <h3 className="font-serif font-bold text-lg text-artisan-slate dark:text-white">Update Shipment Fulfillment Status</h3>
               <button onClick={() => setSelectedShipment(null)} className="text-gray-400 font-bold">✕</button>
             </div>
 
@@ -806,7 +834,7 @@ export default function SellerDashboard() {
                 <select
                   value={newFulfillmentStatus}
                   onChange={(e) => setNewFulfillmentStatus(e.target.value)}
-                  className="w-full border rounded-lg p-2.5 text-sm"
+                  className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                 >
                   <option value="CONFIRMED">CONFIRMED</option>
                   <option value="IN_SHIPMENT">IN_SHIPMENT (Dispatched)</option>
@@ -822,7 +850,7 @@ export default function SellerDashboard() {
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
                   placeholder="e.g. EGPOST-98231-FAY"
-                  className="w-full border rounded-lg p-2.5 font-mono text-sm"
+                  className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 font-mono text-sm"
                 />
               </div>
 
@@ -833,15 +861,15 @@ export default function SellerDashboard() {
                   value={carrierNotes}
                   onChange={(e) => setCarrierNotes(e.target.value)}
                   placeholder="Handed over to Egypt Post courier"
-                  className="w-full border rounded-lg p-2.5 text-sm"
+                  className="w-full border dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg p-2.5 text-sm"
                 />
               </div>
 
-              <div className="border-t pt-4 flex justify-end space-x-3">
+              <div className="border-t dark:border-slate-800 pt-4 flex justify-end space-x-3 rtl:space-x-reverse">
                 <button
                   type="button"
                   onClick={() => setSelectedShipment(null)}
-                  className="px-4 py-2 border rounded-lg text-gray-600"
+                  className="px-4 py-2 border rounded-lg text-gray-600 dark:text-slate-300"
                 >
                   Close
                 </button>

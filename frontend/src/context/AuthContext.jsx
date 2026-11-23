@@ -102,6 +102,9 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('fibyti_token');
     localStorage.removeItem('fibyti_user');
     localStorage.removeItem('fibyti_seller_profile');
+
+    // Redirect immediately to Sign In page
+    window.location.hash = '#/login';
   };
 
   return (
