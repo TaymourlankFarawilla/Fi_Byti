@@ -3,62 +3,62 @@
     {
       "id": "usr-admin-1",
       "email": "admin@fibyti.eg",
-      "password_hash": "$2a$10$z34EsRdloEtqEf21jbJjDu5FhV451R23DSde/o5RyRHEYkNytZZYu",
+      "password_hash": "$2a$10$3Ovvux593GWIwI.bNvtQpO8RP9UdhvnP9oxtHqiM4HObbj7KAMXmS",
       "full_name": "Platform Administrator",
       "phone_number": "+201001112233",
       "role": "ADMIN",
-      "created_at": "2026-11-23T22:08:14.420Z",
-      "updated_at": "2026-11-23T22:08:14.420Z"
+      "created_at": "2026-11-23T22:44:27.827Z",
+      "updated_at": "2026-11-23T22:44:27.827Z"
     },
     {
       "id": "usr-seller-amina",
       "email": "artisan.amina@fibyti.eg",
-      "password_hash": "$2a$10$dl5BPFvRHGOA1TSnLvKAMuM84xAjHHDDxBNUK9Wd5ZuoNKk.9IaD.",
+      "password_hash": "$2a$10$ZXjBCLWJONdBj1AEvee/cOcIav1YXSE/9Z6JCA58ghm8OQDRnDky2",
       "full_name": "Amina El-Fayoumi",
       "phone_number": "+201012345678",
       "role": "SELLER",
-      "created_at": "2026-11-23T22:08:14.423Z",
-      "updated_at": "2026-11-23T22:08:14.423Z"
+      "created_at": "2026-11-23T22:44:27.831Z",
+      "updated_at": "2026-11-23T22:44:27.831Z"
     },
     {
       "id": "usr-seller-nile",
       "email": "artisan.nile@fibyti.eg",
-      "password_hash": "$2a$10$dl5BPFvRHGOA1TSnLvKAMuM84xAjHHDDxBNUK9Wd5ZuoNKk.9IaD.",
+      "password_hash": "$2a$10$ZXjBCLWJONdBj1AEvee/cOcIav1YXSE/9Z6JCA58ghm8OQDRnDky2",
       "full_name": "Youssef Akhmim",
       "phone_number": "+201023456789",
       "role": "SELLER",
-      "created_at": "2026-11-23T22:08:14.429Z",
-      "updated_at": "2026-11-23T22:08:14.429Z"
+      "created_at": "2026-11-23T22:44:27.838Z",
+      "updated_at": "2026-11-23T22:44:27.838Z"
     },
     {
       "id": "usr-seller-tarek",
       "email": "artisan.tarek@fibyti.eg",
-      "password_hash": "$2a$10$dl5BPFvRHGOA1TSnLvKAMuM84xAjHHDDxBNUK9Wd5ZuoNKk.9IaD.",
+      "password_hash": "$2a$10$ZXjBCLWJONdBj1AEvee/cOcIav1YXSE/9Z6JCA58ghm8OQDRnDky2",
       "full_name": "Tarek Leatherworks",
       "phone_number": "+201034567890",
       "role": "SELLER",
-      "created_at": "2026-11-23T22:08:14.434Z",
-      "updated_at": "2026-11-23T22:08:14.434Z"
+      "created_at": "2026-11-23T22:44:27.844Z",
+      "updated_at": "2026-11-23T22:44:27.844Z"
     },
     {
       "id": "usr-seller-siwa",
       "email": "artisan.siwa@fibyti.eg",
-      "password_hash": "$2a$10$dl5BPFvRHGOA1TSnLvKAMuM84xAjHHDDxBNUK9Wd5ZuoNKk.9IaD.",
+      "password_hash": "$2a$10$ZXjBCLWJONdBj1AEvee/cOcIav1YXSE/9Z6JCA58ghm8OQDRnDky2",
       "full_name": "Fatima Siwi",
       "phone_number": "+201045678901",
       "role": "SELLER",
-      "created_at": "2026-11-23T22:08:14.439Z",
-      "updated_at": "2026-11-23T22:08:14.439Z"
+      "created_at": "2026-11-23T22:44:27.851Z",
+      "updated_at": "2026-11-23T22:44:27.851Z"
     },
     {
       "id": "usr-buyer-sarah",
       "email": "buyer.sarah@fibyti.eg",
-      "password_hash": "$2a$10$dK6tD00EkU1jHZuSEkSJEOYtpgEZwj65neb2B9l0HVPSZUEGY9DBC",
+      "password_hash": "$2a$10$/j84qe0mvuiP//nhXXplTeClksYiL9OdHs/u5kKtg6gVLmdJNeCgC",
       "full_name": "Sarah Mansour",
       "phone_number": "+201099887766",
       "role": "BUYER",
-      "created_at": "2026-11-23T22:08:14.447Z",
-      "updated_at": "2026-11-23T22:08:14.447Z"
+      "created_at": "2026-11-23T22:44:27.857Z",
+      "updated_at": "2026-11-23T22:44:27.857Z"
     }
   ],
   "seller_profiles": [
@@ -72,8 +72,8 @@
       "address_details": "Tunis Village, Main Workshop Road",
       "pickup_available": 1,
       "status": "APPROVED",
-      "created_at": "2026-11-23T22:08:14.426Z",
-      "updated_at": "2026-11-23T22:08:14.427Z"
+      "created_at": "2026-11-23T22:44:27.834Z",
+      "updated_at": "2026-11-23T22:44:27.834Z"
     },
     {
       "id": "sel-nile-looms",
@@ -85,8 +85,8 @@
       "address_details": "Akhmim Weavers District, Studio 12",
       "pickup_available": 1,
       "status": "APPROVED",
-      "created_at": "2026-11-23T22:08:14.432Z",
-      "updated_at": "2026-11-23T22:08:14.432Z"
+      "created_at": "2026-11-23T22:44:27.841Z",
+      "updated_at": "2026-11-23T22:44:27.841Z"
     },
     {
       "id": "sel-khedive-leather",
@@ -98,8 +98,8 @@
       "address_details": "Khan El-Khalili, Al-Muizz Street #44",
       "pickup_available": 0,
       "status": "APPROVED",
-      "created_at": "2026-11-23T22:08:14.435Z",
-      "updated_at": "2026-11-23T22:08:14.435Z"
+      "created_at": "2026-11-23T22:44:27.848Z",
+      "updated_at": "2026-11-23T22:44:27.848Z"
     },
     {
       "id": "sel-siwa-crafts",
@@ -110,9 +110,9 @@
       "governorate": "Matrouh",
       "address_details": "Shali Fortress District",
       "pickup_available": 1,
-      "status": "APPROVED",
-      "created_at": "2026-11-23T22:08:14.442Z",
-      "updated_at": "2026-11-23T22:08:14.532Z"
+      "status": "PENDING_VERIFICATION",
+      "created_at": "2026-11-23T22:44:27.853Z",
+      "updated_at": "2026-11-23T22:44:27.853Z"
     }
   ],
   "seller_verification_docs": [
@@ -123,8 +123,8 @@
       "stored_filename": "id-doc-sample-siwa.pdf",
       "file_type": "application/pdf",
       "file_size": 1572864,
-      "created_at": "2026-11-23T22:08:14.444Z",
-      "updated_at": "2026-11-23T22:08:14.445Z"
+      "created_at": "2026-11-23T22:44:27.856Z",
+      "updated_at": "2026-11-23T22:44:27.856Z"
     }
   ],
   "categories": [
@@ -134,8 +134,8 @@
       "slug": "pottery-ceramics",
       "description": "Handcrafted Egyptian earthenware, glazed clay vases, and Fayoum pottery.",
       "image_url": "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80",
-      "created_at": "2026-11-23T22:08:14.400Z",
-      "updated_at": "2026-11-23T22:08:14.403Z"
+      "created_at": "2026-11-23T22:44:27.809Z",
+      "updated_at": "2026-11-23T22:44:27.810Z"
     },
     {
       "id": "cat-textiles",
@@ -143,8 +143,8 @@
       "slug": "handwoven-textiles",
       "description": "Authentic Akhmim cotton throws, bedspreads, and hand-loomed rugs.",
       "image_url": "https://images.unsplash.com/photo-1606744824163-985d376605aa?auto=format&fit=crop&w=600&q=80",
-      "created_at": "2026-11-23T22:08:14.410Z",
-      "updated_at": "2026-11-23T22:08:14.410Z"
+      "created_at": "2026-11-23T22:44:27.815Z",
+      "updated_at": "2026-11-23T22:44:27.815Z"
     },
     {
       "id": "cat-leather",
@@ -152,8 +152,8 @@
       "slug": "artisan-leathercraft",
       "description": "Genuine Egyptian leather bags, hand-carved poufs, and footwear.",
       "image_url": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80",
-      "created_at": "2026-11-23T22:08:14.412Z",
-      "updated_at": "2026-11-23T22:08:14.412Z"
+      "created_at": "2026-11-23T22:44:27.819Z",
+      "updated_at": "2026-11-23T22:44:27.819Z"
     },
     {
       "id": "cat-jewelry",
@@ -161,8 +161,8 @@
       "slug": "fine-egyptian-jewelry",
       "description": "Sterling silver filigree, brass cartouches, and turquoise beadwork.",
       "image_url": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80",
-      "created_at": "2026-11-23T22:08:14.415Z",
-      "updated_at": "2026-11-23T22:08:14.415Z"
+      "created_at": "2026-11-23T22:44:27.821Z",
+      "updated_at": "2026-11-23T22:44:27.821Z"
     },
     {
       "id": "cat-wood",
@@ -170,8 +170,8 @@
       "slug": "woodwork-carvings",
       "description": "Mother-of-pearl inlaid boxes, olive wood bowls, and Islamic geometric screens.",
       "image_url": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80",
-      "created_at": "2026-11-23T22:08:14.418Z",
-      "updated_at": "2026-11-23T22:08:14.418Z"
+      "created_at": "2026-11-23T22:44:27.823Z",
+      "updated_at": "2026-11-23T22:44:27.823Z"
     }
   ],
   "products": [
@@ -191,8 +191,8 @@
       "stock_quantity": 12,
       "status": "PUBLISHED",
       "is_featured": 1,
-      "created_at": "2026-11-23T22:08:14.450Z",
-      "updated_at": "2026-11-23T22:08:14.450Z"
+      "created_at": "2026-11-23T22:44:27.860Z",
+      "updated_at": "2026-11-23T22:44:27.860Z"
     },
     {
       "id": "prd-fayoum-bowl-set",
@@ -210,8 +210,8 @@
       "stock_quantity": 8,
       "status": "PUBLISHED",
       "is_featured": 0,
-      "created_at": "2026-11-23T22:08:14.462Z",
-      "updated_at": "2026-11-23T22:08:14.462Z"
+      "created_at": "2026-11-23T22:44:27.874Z",
+      "updated_at": "2026-11-23T22:44:27.874Z"
     },
     {
       "id": "prd-akhmim-throw-1",
@@ -229,8 +229,8 @@
       "stock_quantity": 15,
       "status": "PUBLISHED",
       "is_featured": 1,
-      "created_at": "2026-11-23T22:08:14.467Z",
-      "updated_at": "2026-11-23T22:08:14.467Z"
+      "created_at": "2026-11-23T22:44:27.881Z",
+      "updated_at": "2026-11-23T22:44:27.881Z"
     },
     {
       "id": "prd-akhmim-cushions",
@@ -248,8 +248,8 @@
       "stock_quantity": 20,
       "status": "PUBLISHED",
       "is_featured": 0,
-      "created_at": "2026-11-23T22:08:14.475Z",
-      "updated_at": "2026-11-23T22:08:14.475Z"
+      "created_at": "2026-11-23T22:44:27.888Z",
+      "updated_at": "2026-11-23T22:44:27.888Z"
     },
     {
       "id": "prd-leather-pouf-1",
@@ -267,8 +267,8 @@
       "stock_quantity": 6,
       "status": "PUBLISHED",
       "is_featured": 1,
-      "created_at": "2026-11-23T22:08:14.480Z",
-      "updated_at": "2026-11-23T22:08:14.480Z"
+      "created_at": "2026-11-23T22:44:27.893Z",
+      "updated_at": "2026-11-23T22:44:27.893Z"
     },
     {
       "id": "prd-leather-tote",
@@ -286,91 +286,91 @@
       "stock_quantity": 5,
       "status": "PUBLISHED",
       "is_featured": 0,
-      "created_at": "2026-11-23T22:08:14.488Z",
-      "updated_at": "2026-11-23T22:08:14.488Z"
+      "created_at": "2026-11-23T22:44:27.903Z",
+      "updated_at": "2026-11-23T22:44:27.903Z"
     }
   ],
   "product_images": [
     {
-      "id": "f5ee4d46-fe03-443b-9103-daf6f6ab3e1a",
+      "id": "66697da3-cb19-4ee9-b04c-25bfce302ffa",
       "product_id": "prd-fayoum-vase-1",
       "image_url": "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80",
       "is_primary": 1,
       "sort_order": 0,
-      "created_at": "2026-11-23T22:08:14.455Z",
-      "updated_at": "2026-11-23T22:08:14.455Z"
+      "created_at": "2026-11-23T22:44:27.868Z",
+      "updated_at": "2026-11-23T22:44:27.868Z"
     },
     {
-      "id": "53818907-8ab5-4599-b3f0-eb050c641640",
+      "id": "7a46774b-a887-47e9-bf16-7c578733badb",
       "product_id": "prd-fayoum-vase-1",
       "image_url": "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=800&q=80",
       "is_primary": 0,
       "sort_order": 1,
-      "created_at": "2026-11-23T22:08:14.460Z",
-      "updated_at": "2026-11-23T22:08:14.460Z"
+      "created_at": "2026-11-23T22:44:27.871Z",
+      "updated_at": "2026-11-23T22:44:27.871Z"
     },
     {
-      "id": "6769c319-c1c6-4a8a-882c-ff20917562b2",
+      "id": "de8d8d03-19e5-44ff-8227-ebe7119e0a6d",
       "product_id": "prd-fayoum-bowl-set",
       "image_url": "https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=800&q=80",
       "is_primary": 1,
       "sort_order": 0,
-      "created_at": "2026-11-23T22:08:14.464Z",
-      "updated_at": "2026-11-23T22:08:14.464Z"
+      "created_at": "2026-11-23T22:44:27.876Z",
+      "updated_at": "2026-11-23T22:44:27.876Z"
     },
     {
-      "id": "62eaf0e8-d178-4dbd-a5cb-8bc24d9819c7",
+      "id": "9524a60c-4a89-4472-b775-8223ac0ec943",
       "product_id": "prd-akhmim-throw-1",
       "image_url": "https://images.unsplash.com/photo-1606744824163-985d376605aa?auto=format&fit=crop&w=800&q=80",
       "is_primary": 1,
       "sort_order": 0,
-      "created_at": "2026-11-23T22:08:14.469Z",
-      "updated_at": "2026-11-23T22:08:14.469Z"
+      "created_at": "2026-11-23T22:44:27.884Z",
+      "updated_at": "2026-11-23T22:44:27.884Z"
     },
     {
-      "id": "fdcc45ac-566b-4012-9d10-b7e24fdb7894",
+      "id": "7fdcef1e-826a-4c68-9bf6-dfb4d3ad8533",
       "product_id": "prd-akhmim-throw-1",
       "image_url": "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=800&q=80",
       "is_primary": 0,
       "sort_order": 1,
-      "created_at": "2026-11-23T22:08:14.471Z",
-      "updated_at": "2026-11-23T22:08:14.471Z"
+      "created_at": "2026-11-23T22:44:27.886Z",
+      "updated_at": "2026-11-23T22:44:27.886Z"
     },
     {
-      "id": "386376b8-df77-4d7a-ad92-01d73ca31b2c",
+      "id": "52885c3b-ef57-4d62-a9ba-8aaaed460b77",
       "product_id": "prd-akhmim-cushions",
       "image_url": "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=800&q=80",
       "is_primary": 1,
       "sort_order": 0,
-      "created_at": "2026-11-23T22:08:14.478Z",
-      "updated_at": "2026-11-23T22:08:14.478Z"
+      "created_at": "2026-11-23T22:44:27.890Z",
+      "updated_at": "2026-11-23T22:44:27.890Z"
     },
     {
-      "id": "39f1ed8a-e394-45e4-af87-09d307743c3f",
+      "id": "8fef8dce-c346-4f9d-b86b-b8de4ad5b1ca",
       "product_id": "prd-leather-pouf-1",
       "image_url": "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80",
       "is_primary": 1,
       "sort_order": 0,
-      "created_at": "2026-11-23T22:08:14.483Z",
-      "updated_at": "2026-11-23T22:08:14.483Z"
+      "created_at": "2026-11-23T22:44:27.896Z",
+      "updated_at": "2026-11-23T22:44:27.896Z"
     },
     {
-      "id": "2ae8747c-8f8c-46a8-bc08-b6bdc023ce6c",
+      "id": "f9d24e40-929e-48d2-a098-95661016c87d",
       "product_id": "prd-leather-pouf-1",
       "image_url": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
       "is_primary": 0,
       "sort_order": 1,
-      "created_at": "2026-11-23T22:08:14.486Z",
-      "updated_at": "2026-11-23T22:08:14.486Z"
+      "created_at": "2026-11-23T22:44:27.899Z",
+      "updated_at": "2026-11-23T22:44:27.899Z"
     },
     {
-      "id": "a0d6db88-50d6-4d3a-8777-e3df1f7f3004",
+      "id": "df44b7c5-8df9-4e93-be07-b1fb6f7296af",
       "product_id": "prd-leather-tote",
       "image_url": "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80",
       "is_primary": 1,
       "sort_order": 0,
-      "created_at": "2026-11-23T22:08:14.493Z",
-      "updated_at": "2026-11-23T22:08:14.493Z"
+      "created_at": "2026-11-23T22:44:27.905Z",
+      "updated_at": "2026-11-23T22:44:27.906Z"
     }
   ],
   "orders": [
@@ -391,8 +391,8 @@
       "shipping_address": "14 Maadi Degla",
       "shipping_city": "Road 206",
       "shipping_governorate": "Cairo",
-      "created_at": "2026-11-23T22:08:14.497Z",
-      "updated_at": "2026-11-23T22:08:14.497Z"
+      "created_at": "2026-11-23T22:44:27.909Z",
+      "updated_at": "2026-11-23T22:44:27.910Z"
     }
   ],
   "order_shipments": [
@@ -407,8 +407,8 @@
       "seller_net_amount_egp": 666.4,
       "fulfillment_status": "CONFIRMED",
       "tracking_number": "EGPOST-98231-FAY",
-      "created_at": "2026-11-23T22:08:14.499Z",
-      "updated_at": "2026-11-23T22:08:14.500Z"
+      "created_at": "2026-11-23T22:44:27.913Z",
+      "updated_at": "2026-11-23T22:44:27.913Z"
     },
     {
       "id": "shp-1001-akhmim",
@@ -421,13 +421,13 @@
       "seller_net_amount_egp": 1225,
       "fulfillment_status": "IN_SHIPMENT",
       "tracking_number": "BOSTA-EX-8832-SHG",
-      "created_at": "2026-11-23T22:08:14.504Z",
-      "updated_at": "2026-11-23T22:08:14.504Z"
+      "created_at": "2026-11-23T22:44:27.917Z",
+      "updated_at": "2026-11-23T22:44:27.917Z"
     }
   ],
   "order_items": [
     {
-      "id": "126a4007-ff55-4af7-8dcc-e67eaafaff25",
+      "id": "5e84b65a-befe-4299-a8cd-34f5ffa8d2b1",
       "order_id": "FB-2026-1001",
       "shipment_id": "shp-1001-amina",
       "product_id": "prd-fayoum-vase-1",
@@ -435,11 +435,11 @@
       "unit_price_egp": 680,
       "quantity": 1,
       "total_price_egp": 680,
-      "created_at": "2026-11-23T22:08:14.502Z",
-      "updated_at": "2026-11-23T22:08:14.502Z"
+      "created_at": "2026-11-23T22:44:27.915Z",
+      "updated_at": "2026-11-23T22:44:27.915Z"
     },
     {
-      "id": "66dd3689-b808-4740-a0f6-f7d14989f1f7",
+      "id": "1693d8db-4209-4e32-a999-54a0a1906453",
       "order_id": "FB-2026-1001",
       "shipment_id": "shp-1001-akhmim",
       "product_id": "prd-akhmim-throw-1",
@@ -447,13 +447,13 @@
       "unit_price_egp": 1250,
       "quantity": 1,
       "total_price_egp": 1250,
-      "created_at": "2026-11-23T22:08:14.507Z",
-      "updated_at": "2026-11-23T22:08:14.507Z"
+      "created_at": "2026-11-23T22:44:27.920Z",
+      "updated_at": "2026-11-23T22:44:27.920Z"
     }
   ],
   "whatsapp_logs": [
     {
-      "id": "84587291-203f-464b-9102-ee2274110d3b",
+      "id": "0cc5e378-7e35-4f34-b7aa-e2d1133d3b3b",
       "order_id": "FB-2026-1001",
       "recipient_phone": "+201099887766",
       "event_type": "ORDER_STATUS_CONFIRMED",
@@ -461,18 +461,9 @@
       "status": "DEMO_SIMULATED",
       "is_demo_mode": 1,
       "status_message": "Demo Mode: API credentials not configured. WhatsApp message was logged and simulated in Demo Inspector.",
-      "created_at": "2026-11-23T22:08:14.511Z",
-      "updated_at": "2026-11-23T22:08:14.511Z"
+      "created_at": "2026-11-23T22:44:27.922Z",
+      "updated_at": "2026-11-23T22:44:27.922Z"
     }
   ],
-  "database_backups": [
-    {
-      "id": "a72c7a8c-0440-4a8d-a147-de6787e23259",
-      "filename": "fi_byti_backup_2026-11-23T22-08-14-581Z.db",
-      "file_size": 18765,
-      "backup_type": "MANUAL",
-      "created_at": "2026-11-23T22:08:14.592Z",
-      "updated_at": "2026-11-23T22:08:14.592Z"
-    }
-  ]
+  "database_backups": []
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { PackageCheck, Truck, Store, MapPin, AlertCircle } from 'lucide-react';
+import { PackageCheck, Truck, Store, MapPin, AlertCircle, CreditCard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function BuyerOrdersPage() {
   const { user, token } = useAuth();
-  const { t } = useLanguage();
+  const { t, isRtl } = useLanguage();
   const navigate = useNavigate();
 
   // Route protection
@@ -69,7 +69,7 @@ export default function BuyerOrdersPage() {
       ) : (
         <div className="space-y-6">
           {orders.map((order) => (
-            <div key={order.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 overflow-hidden shadow-sm space-y-4">
+            <div key={order.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-artisan-terracotta/20 dark:border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between space-y-4">
 
               {/* Order Header */}
               <div className="bg-artisan-sand dark:bg-slate-800 p-4 border-b border-artisan-terracotta/15 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -91,9 +91,9 @@ export default function BuyerOrdersPage() {
 
               {/* Seller Shipments Breakdown */}
               <div className="p-4 space-y-4">
-                <div className="text-xs font-bold text-gray-700 dark:text-slate-300">Artisan Shipments ({order.shipments.length}):</div>
+                <div className="text-xs font-bold text-gray-700 dark:text-slate-300">Artisan Shipments ({order.shipments ? order.shipments.length : 0}):</div>
 
-                {order.shipments.map((shipment) => (
+                {order.shipments && order.shipments.map((shipment) => (
                   <div key={shipment.id} className="bg-gray-50 dark:bg-slate-800/60 p-4 rounded-xl border border-gray-200 dark:border-slate-700 space-y-3 text-xs">
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b dark:border-slate-700 pb-2">
                       <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -121,7 +121,7 @@ export default function BuyerOrdersPage() {
 
                     {/* Shipment Items */}
                     <div className="space-y-1">
-                      {shipment.items.map((item) => (
+                      {shipment.items && shipment.items.map((item) => (
                         <div key={item.id} className="flex items-center justify-between py-1 text-gray-700 dark:text-slate-300">
                           <span>{item.product_name} x {item.quantity}</span>
                           <span className="font-bold">{item.total_price_egp} {t('egp')}</span>
@@ -130,12 +130,23 @@ export default function BuyerOrdersPage() {
                     </div>
                   </div>
                 ))}
+              </div>
 
-                <div className="pt-2 border-t dark:border-slate-800 flex justify-between items-center text-xs">
-                  <span className="text-gray-500 dark:text-slate-400">Shipping: {order.total_shipping_egp} {t('egp')}</span>
-                  <span className="font-extrabold text-base text-artisan-slate dark:text-white">{t('grandTotal')}: {order.total_amount_egp} {t('egp')}</span>
+              {/* SINGLE GRAND TOTAL BLOCK AT THE VERY BOTTOM OF THE ORDER CARD */}
+              <div className="p-4 bg-artisan-sand/60 dark:bg-slate-800/80 border-t dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div className="space-y-0.5 text-gray-600 dark:text-slate-300">
+                  <div><span className="text-gray-500 dark:text-slate-400">Recipient:</span> <strong>{order.shipping_full_name}</strong> ({order.shipping_phone})</div>
+                  <div><span className="text-gray-500 dark:text-slate-400">Subtotal:</span> {order.subtotal_egp} {t('egp')} | <span className="text-gray-500 dark:text-slate-400">Shipping:</span> {order.total_shipping_egp} {t('egp')}</div>
+                </div>
+
+                <div className="text-right rtl:text-left bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border dark:border-slate-700 shadow-sm">
+                  <span className="text-[11px] text-gray-400 block uppercase tracking-wider font-bold">{t('grandTotal')}</span>
+                  <span className="text-xl font-extrabold text-artisan-terracotta dark:text-orange-400">
+                    {order.total_amount_egp} <span className="text-xs font-normal text-artisan-slate dark:text-white">{t('egp')}</span>
+                  </span>
                 </div>
               </div>
+
             </div>
           ))}
         </div>
