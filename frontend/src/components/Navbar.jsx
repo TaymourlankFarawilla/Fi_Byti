@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { ShoppingBag, Search, Store, Shield, User, LogOut, PackageCheck, Menu, X, Globe, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, Search, Store, Shield, User, LogOut, PackageCheck, Menu, X, Globe, Sun, Moon, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -28,16 +28,17 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
 
-          {/* Logo */}
+          {/* Logo Badge: "Fi Byti" */}
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse group">
-            <div className="w-11 h-11 rounded-xl bg-artisan-terracotta flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-              <span className="font-serif font-bold text-2xl">في</span>
+            <div className="px-3.5 py-1.5 rounded-xl bg-artisan-terracotta flex items-center space-x-1.5 rtl:space-x-reverse text-white shadow-md group-hover:scale-105 transition-transform">
+              <Sparkles className="w-4 h-4 text-amber-300 shrink-0" />
+              <span className="font-serif font-extrabold text-lg tracking-tight whitespace-nowrap">Fi Byti</span>
             </div>
-            <div>
-              <div className="font-serif font-bold text-2xl tracking-tight text-artisan-slate dark:text-amber-100 group-hover:text-artisan-terracotta transition-colors">
-                {t('appName')} <span className="text-artisan-terracotta text-sm font-sans font-normal ml-1">{t('appNameAr')}</span>
+            <div className="hidden sm:block">
+              <div className="font-serif font-bold text-xl tracking-tight text-artisan-slate dark:text-amber-100 group-hover:text-artisan-terracotta transition-colors">
+                في بيتي
               </div>
-              <p className="text-[11px] text-artisan-slate/60 dark:text-slate-400 font-medium tracking-wide">{t('tagline')}</p>
+              <p className="text-[10px] text-artisan-slate/60 dark:text-slate-400 font-medium tracking-wide">{t('tagline')}</p>
             </div>
           </Link>
 

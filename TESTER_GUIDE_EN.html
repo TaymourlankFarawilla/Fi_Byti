@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Fi Byti - English Testing Guide</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; font-size: 13px; }
+    h1, h2, h3 { page-break-after: avoid; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+    th { background-color: #f8fafc; font-weight: bold; color: #0f172a; }
+    tr:nth-child(even) { background-color: #f1f5f9; }
+    li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <h1 style="color:#C85A32; font-size: 24px; border-bottom: 2px solid #C85A32; padding-bottom: 8px; margin-bottom: 16px;">🧪 Fi Byti (في بيتي) - Complete Testing Guide (English)</h1>
+
+Welcome to the comprehensive QA & Testing Guide for <strong>Fi Byti (في بيتي)</strong> Egyptian Handmade Craft Marketplace.
+
+<li style="margin-left: 20px; list-style-type: disc;"><strong>Live Public Deployment URL</strong>: [https://taymourlankfarawilla.github.io/Fi_Byti/](https://taymourlankfarawilla.github.io/Fi_Byti/)</li>
+<li style="margin-left: 20px; list-style-type: disc;"><strong>GitHub Repository</strong>: [https://github.com/TaymourlankFarawilla/Fi_Byti](https://github.com/TaymourlankFarawilla/Fi_Byti)</li>
+
+---
+
+<h2 style="color:#1C2526; font-size: 18px; margin-top: 24px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">👥 Pre-Configured Demo Personas & Credentials</h2>
+
+You can sign in using any of the 6 demo credentials directly on the <strong>Sign In</strong> page (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">/#/login</code>), where 1-click Quick Demo cards are provided for instant login:
+
+| Role | Name & Studio | Email | Password | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| 🛡️ <strong>Administrator</strong> | Platform Admin | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">admin@fibyti.eg</code> | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Admin123!</code> | Active Admin |
+| 🏺 <strong>Approved Seller 1</strong> | Amina Fayoum Clay Studio | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">artisan.amina@fibyti.eg</code> | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Seller123!</code> | Store Approved |
+| 🧵 <strong>Approved Seller 2</strong> | Nile Looms Akhmim Textiles | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">artisan.nile@fibyti.eg</code> | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Seller123!</code> | Store Approved |
+| 💼 <strong>Approved Seller 3</strong> | Khedive Leather Cairo | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">artisan.tarek@fibyti.eg</code> | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Seller123!</code> | Store Approved |
+| 📄 <strong>Pending Seller</strong> | Siwa Oasis Salt & Silver | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">artisan.siwa@fibyti.eg</code> | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Seller123!</code> | Pending Verification |
+| 🛍️ <strong>Buyer Account</strong> | Sarah Mansour | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">buyer.sarah@fibyti.eg</code> | <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Buyer123!</code> | Active Buyer |
+
+> <strong>Note</strong>: You can also register a brand new custom account on the <strong>Sign Up</strong> page (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">/#/register</code>) with your own email and password!
+
+---
+
+<h2 style="color:#1C2526; font-size: 18px; margin-top: 24px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">📋 Complete Step-by-Step Test Scenarios</h2>
+
+<h3 style="color:#334155; font-size: 15px; margin-top: 16px; margin-bottom: 8px;">Test Scenario 1: Artisan Identity Verification & Admin Approval</h3>
+<li style="margin-left: 20px; list-style-type: decimal;">Go to <strong>Sign In</strong> (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">/#/login</code>) and click <strong>Pending Verification Seller (Siwa Salt)</strong>.</li>
+2. Open <strong>Identity Verification Upload</strong> tab in the Artisan Portal.
+3. Observe store status is <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">PENDING_VERIFICATION</code> and identity document <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Fatima_Siwa_National_ID.pdf</code> is attached.
+4. Sign out and sign in as <strong>Platform Administrator</strong> (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">admin@fibyti.eg</code> / <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Admin123!</code>).
+5. In the <strong>Admin Dashboard</strong>, notice the <strong>Verification Queue</strong> badge counter <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">(1)</code>.
+6. Click <strong>Inspect ID File (Secure Admin Route)</strong> to inspect the protected verification document.
+7. Click <strong>Approve & Activate Seller Store</strong>.
+8. <strong>Result</strong>: The seller's status immediately updates to <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">APPROVED</code> and moves to the active sellers table.
+
+---
+
+<h3 style="color:#334155; font-size: 15px; margin-top: 16px; margin-bottom: 8px;">Test Scenario 2: Seller Product Creation & Stock Tracking</h3>
+<li style="margin-left: 20px; list-style-type: decimal;">Sign in as <strong>Amina (Approved Seller)</strong> (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">artisan.amina@fibyti.eg</code> / <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Seller123!</code>).</li>
+2. Navigate to <strong>Artisan Portal</strong> -> <strong>My Craft Listings</strong>.
+3. Click <strong>Publish New Handmade Product</strong>.
+4. Fill out form fields:
+   - <strong>Title</strong>: <em>Fayoum Terracotta Glazed Jug</em>
+   - <strong>Category</strong>: <em>Pottery & Ceramics</em>
+   - <strong>Price in EGP</strong>: <em>450</em>
+   - <strong>Materials</strong>: <em>Natural Nile Clay, Cobalt Glaze</em>
+   - <strong>Dimensions</strong>: <em>Height 22cm, Diameter 14cm</em>
+   - <strong>Weight</strong>: <em>0.8 kg</em>
+   - <strong>Lead Time</strong>: <em>2 days</em>
+   - <strong>Stock Quantity</strong>: <em>10</em>
+5. Click <strong>Save Product Listing</strong>.
+6. <strong>Result</strong>: The new product is published instantly and appears in the live marketplace catalog.
+
+---
+
+<h3 style="color:#334155; font-size: 15px; margin-top: 16px; margin-bottom: 8px;">Test Scenario 3: Multi-Seller Cart & Split Shipping</h3>
+<li style="margin-left: 20px; list-style-type: decimal;">Sign in as <strong>Sarah (Buyer)</strong> (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">buyer.sarah@fibyti.eg</code> / <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">Buyer123!</code>).</li>
+2. Go to <strong>Browse Marketplace</strong> (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">/#/catalog</code>).
+3. Add <strong>Fayoum Turquoise Glazed Clay Vase</strong> (from Amina Fayoum Studio) to cart.
+4. Add <strong>Akhmim 100% Egyptian Cotton Throw</strong> (from Nile Looms) to cart.
+5. Open <strong>Cart</strong> (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">/#/cart</code>).
+6. Notice items are grouped into 2 distinct <strong>Artisan Studio Shipments</strong>.
+7. Select shipping per seller:
+   - <em>Amina Studio</em>: Select <strong>Egypt Post</strong> (40 EGP).
+   - <em>Nile Looms</em>: Select <strong>Private Express Courier</strong> (65 EGP) or <strong>Direct Pickup</strong> (0 EGP).
+8. Observe combined shipping total and grand total automatically update.
+
+---
+
+<h3 style="color:#334155; font-size: 15px; margin-top: 16px; margin-bottom: 8px;">Test Scenario 4: Checkout, Gateway Fees & 2% Platform Commission</h3>
+<li style="margin-left: 20px; list-style-type: decimal;">Click <strong>Proceed to Checkout</strong>.</li>
+2. Enter delivery address details (Full Name, Phone Number, Governorate, City, Street Address).
+3. Select Payment Option:
+   - <strong>E-Wallets</strong> (Vodafone Cash / InstaPay)
+   - <strong>Bank Cards</strong> (Visa / Mastercard test card <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">4242 4242 4242 4242</code>)
+   - <strong>Cash on Delivery (COD)</strong>
+4. Note transparent payment gateway fee (2.5% + 3 EGP for Card/Wallet, 0 EGP for COD).
+5. Click <strong>Confirm Order</strong>.
+6. <strong>Result</strong>: Order is confirmed (<code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">#FB-2026-XXXX</code>). The system records the exact <strong>2% Platform Commission</strong> on product subtotal and 98% net seller earnings.
+
+---
+
+<h3 style="color:#334155; font-size: 15px; margin-top: 16px; margin-bottom: 8px;">Test Scenario 5: Order Status Update & WhatsApp Demo Inspector</h3>
+<li style="margin-left: 20px; list-style-type: decimal;">Sign in as <strong>Amina (Approved Seller)</strong> -> <strong>Orders & Fulfillment</strong>.</li>
+2. Click <strong>Update Fulfillment Status & Trigger WhatsApp</strong>.
+3. Change status from <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">CONFIRMED</code> to <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">IN_SHIPMENT</code>, enter tracking number <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">EGPOST-98231-FAY</code>, and submit.
+4. Observe the green WhatsApp notification box showing the exact Meta WhatsApp Business API JSON payload.
+5. Sign in as <strong>Platform Administrator</strong> -> <strong>WhatsApp Demo Inspector</strong> tab to view the complete audit log of all simulated messages.
+
+---
+
+<h3 style="color:#334155; font-size: 15px; margin-top: 16px; margin-bottom: 8px;">Test Scenario 6: Resetting Demo Data</h3>
+<li style="margin-left: 20px; list-style-type: decimal;">Scroll to the <strong>Footer</strong> on any page or go to the <strong>Sign In</strong> page.</li>
+2. Click <strong>Reset Demo Data (إعادة ضبط البيانات التجريبية)</strong>.
+3. Confirm the dialog prompt.
+4. <strong>Result</strong>: All local database modifications reset back to pristine initial seed state.
+
+---
+
+<h2 style="color:#1C2526; font-size: 18px; margin-top: 24px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">🌍 Language & Dark Theme Testing</h2>
+- Click <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">🌍 English</code> / <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">العربية</code> in the Navbar to switch between English and Arabic with complete RTL layout support.
+- Click <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">☀️</code> / <code style="background-color: #f1f5f9; color: #c85a32; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px;">🌙</code> in the Navbar to toggle between Light mode and Dark mode.
+
+</body>
+</html>
